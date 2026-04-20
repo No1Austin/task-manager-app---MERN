@@ -6,6 +6,8 @@ const mongoose = require("mongoose");
 const authRoutes = require("./routes/authRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 
+
+
 dotenv.config();
 
 const app = express();
@@ -19,9 +21,6 @@ app.use(
     credentials: true,
   })
 );
-
-app.use(express.json());
-app.use(cookieParser());
 
 app.get("/api/health", (req, res) => {
   res.status(200).json({
