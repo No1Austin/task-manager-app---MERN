@@ -51,8 +51,8 @@ export default function DashboardPage() {
   const [tasks, setTasks] = useState([]);
   const [pageLoading, setPageLoading] = useState(true);
 
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
-  const [showSidebar, setShowSidebar] = useState(window.innerWidth >= 1024);
+  const [isDesktop, setIsDesktop] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
@@ -72,16 +72,17 @@ export default function DashboardPage() {
 
   const profileRef = useRef(null);
 
-  useEffect(() => {
-    const handleResize = () => {
-      const desktop = window.innerWidth >= 1024;
-      setIsDesktop(desktop);
-      setShowSidebar(desktop);
-    };
+useEffect(() => {
+  const handleResize = () => {
+    const desktop = window.innerWidth >= 1024;
+    setIsDesktop(desktop);
+    setShowSidebar(desktop);
+  };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  handleResize(); // set correct values after mount
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
