@@ -14,13 +14,13 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://task-manager-app-mern-rlew-git-main-austins-projects-f4744c22.vercel.app/",
+    ],
     credentials: true,
   })
 );
-
-app.use(express.json());
-app.use(cookieParser());
 
 app.get("/api/health", (req, res) => {
   res.status(200).json({
