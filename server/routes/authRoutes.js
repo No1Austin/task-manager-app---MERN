@@ -130,6 +130,7 @@ router.get("/me", protect, async (req, res) => {
 });
 
 // FORGOT PASSWORD
+
 router.post("/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
