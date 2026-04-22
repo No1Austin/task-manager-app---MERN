@@ -1,30 +1,35 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  password: String,
-
-  // 🎨 Theme
-  theme: {
-    type: String,
-    default: "light"
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    theme: {
+      type: String,
+      default: "light",
+    },
+    subscriptionStatus: {
+      type: String,
+      enum: ["trial", "active", "expired"],
+      default: "trial",
+    },
+    trialStartDate: Date,
+    trialEndsAt: Date,
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
   },
-
-  // 💳 Subscription
-  subscriptionStatus: {
-    type: String,
-    enum: ["trial", "active", "expired"],
-    default: "trial"
-  },
-
-  trialStartDate: {
-    type: Date
-  },
-
-  trialEndsAt: {
-    type: Date
-  }
-});
+  { timestamps: true }
+);
 
 module.exports = mongoose.model("User", userSchema);
