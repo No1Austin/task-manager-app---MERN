@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -13,8 +14,17 @@ export default function RegisterPage() {
     password: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!form.name || !form.email || !form.password) {
+      toast.error("Please fill all fields");
+      return;
+    }
+
+    setLoading(true);
 
     try {
       await register(form.name, form.email, form.password);
@@ -22,21 +32,27 @@ export default function RegisterPage() {
       navigate("/dashboard");
     } catch (error) {
       toast.error(error.response?.data?.message || "Registration failed");
-      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
-      <form
+      <motion.form
         onSubmit={handleSubmit}
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
         className="glass w-full max-w-md rounded-3xl p-8"
       >
-        <h2 className="mb-6 text-3xl font-black">Sign Up</h2>
+        <h2 className="mb-2 text-3xl font-black">Create Account</h2>
+        <p className="mb-6 text-sm text-slate-300">
+          Join TaskFlow and start managing your tasks.
+        </p>
 
         <input
           type="text"
-          placeholder="Name"
+          placeholder="Full Name"
           className="mb-4 w-full rounded-xl bg-white/5 p-3 outline-none"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -60,18 +76,29 @@ export default function RegisterPage() {
 
         <button
           type="submit"
-          className="w-full rounded-xl bg-gradient-to-r from-violet-500 to-cyan-400 py-3 font-bold"
+          disabled={loading}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-500 to-cyan-400 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
         >
-          Create Account
+          {loading && <ButtonSpinner />}
+          {loading ? "Creating account..." : "Create Account"}
         </button>
 
-        <p className="mt-4 text-center text-sm text-slate-300">
+        <p className="mt-5 text-center text-sm text-slate-300">
           Already have an account?{" "}
           <Link to="/login" className="text-cyan-300 hover:underline">
             Log in
           </Link>
         </p>
-      </form>
+      </motion.form>
     </div>
+  );
+}
+
+function ButtonSpinner({ size = 16 }) {
+  return (
+    <span
+      className="inline-block animate-spin rounded-full border-2 border-white/30 border-t-white"
+      style={{ width: size, height: size }}
+    />
   );
 }

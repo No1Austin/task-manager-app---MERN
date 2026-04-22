@@ -65,6 +65,10 @@ export default function DashboardPage() {
   const [editForm, setEditForm] = useState(emptyForm);
   const [editLoading, setEditLoading] = useState(false);
 
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [logoutLoading, setLogoutLoading] = useState(false);
+  const [statusLoadingId, setStatusLoadingId] = useState(null);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [priorityFilter, setPriorityFilter] = useState("All");
@@ -72,17 +76,17 @@ export default function DashboardPage() {
 
   const profileRef = useRef(null);
 
-useEffect(() => {
-  const handleResize = () => {
-    const desktop = window.innerWidth >= 1024;
-    setIsDesktop(desktop);
-    setShowSidebar(desktop);
-  };
+  useEffect(() => {
+    const handleResize = () => {
+      const desktop = window.innerWidth >= 1024;
+      setIsDesktop(desktop);
+      setShowSidebar(desktop);
+    };
 
-  handleResize(); // set correct values after mount
-  window.addEventListener("resize", handleResize);
-  return () => window.removeEventListener("resize", handleResize);
-}, []);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -90,14 +94,14 @@ useEffect(() => {
         setShowCreateModal(false);
         setEditingTask(null);
         setShowProfileDropdown(false);
-        setDeleteTarget(null);
+        if (!deleteLoading) setDeleteTarget(null);
         if (!isDesktop) setShowSidebar(false);
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isDesktop]);
+  }, [isDesktop, deleteLoading]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -263,22 +267,28 @@ useEffect(() => {
     if (!deleteTarget) return;
 
     try {
+      setDeleteLoading(true);
       await API.delete(`/tasks/${deleteTarget._id}`);
       setTasks((prev) => prev.filter((task) => task._id !== deleteTarget._id));
       toast.success("Task removed");
       setDeleteTarget(null);
     } catch {
       toast.error("Failed to delete task");
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
   const handleStatusChange = async (id, newStatus) => {
     try {
+      setStatusLoadingId(id);
       const { data } = await API.put(`/tasks/${id}`, { status: newStatus });
       setTasks((prev) => prev.map((task) => (task._id === id ? data : task)));
       toast.success("Task updated");
     } catch {
       toast.error("Failed to update task");
+    } finally {
+      setStatusLoadingId(null);
     }
   };
 
@@ -287,13 +297,34 @@ useEffect(() => {
     setShowCreateModal(true);
   };
 
-  const handleLogout = () => {
-    logout();
-    toast.success("Logged out");
+  const handleLogout = async () => {
+    try {
+      setLogoutLoading(true);
+      await Promise.resolve(logout());
+      toast.success("Logged out");
+    } finally {
+      setLogoutLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen p-4 md:p-6">
+      <AnimatePresence>
+        {pageLoading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/20 backdrop-blur-[2px]"
+          >
+            <div className="glass flex items-center gap-3 rounded-2xl px-5 py-4">
+              <ButtonSpinner size={18} />
+              <span className="text-main font-medium">Loading dashboard...</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[280px_1fr]">
         <AnimatePresence>
           {showSidebar && (
@@ -355,10 +386,11 @@ useEffect(() => {
 
                   <button
                     onClick={handleLogout}
-                    className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition hover:bg-red-500/10"
+                    disabled={logoutLoading}
+                    className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    <LogOut size={18} />
-                    Logout
+                    {logoutLoading ? <ButtonSpinner size={16} /> : <LogOut size={18} />}
+                    {logoutLoading ? "Logging out..." : "Logout"}
                   </button>
                 </nav>
 
@@ -520,10 +552,11 @@ useEffect(() => {
                           setShowProfileDropdown(false);
                           handleLogout();
                         }}
-                        className="flex w-full items-center gap-2 rounded-2xl px-3 py-3 text-left transition hover:bg-red-500/10"
+                        disabled={logoutLoading}
+                        className="flex w-full items-center gap-2 rounded-2xl px-3 py-3 text-left transition hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-60"
                       >
-                        <LogOut size={16} />
-                        Logout
+                        {logoutLoading ? <ButtonSpinner size={16} /> : <LogOut size={16} />}
+                        {logoutLoading ? "Logging out..." : "Logout"}
                       </button>
                     </motion.div>
                   )}
@@ -697,16 +730,25 @@ useEffect(() => {
                         </div>
                       </div>
 
-                      <div className="flex flex-wrap gap-3">
-                        <select
-                          value={task.status}
-                          onChange={(e) => handleStatusChange(task._id, e.target.value)}
-                          className="input-modern rounded-2xl px-4 py-2 outline-none"
-                        >
-                          <option value="Pending">Pending</option>
-                          <option value="In Progress">In Progress</option>
-                          <option value="Completed">Completed</option>
-                        </select>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <div className="relative">
+                          <select
+                            value={task.status}
+                            disabled={statusLoadingId === task._id}
+                            onChange={(e) => handleStatusChange(task._id, e.target.value)}
+                            className="input-modern rounded-2xl px-4 py-2 pr-10 outline-none disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                          </select>
+
+                          {statusLoadingId === task._id && (
+                            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
+                              <ButtonSpinner size={14} />
+                            </span>
+                          )}
+                        </div>
 
                         <button
                           onClick={() => openEditModal(task)}
@@ -765,6 +807,7 @@ useEffect(() => {
         confirmText="Delete"
         onClose={() => setDeleteTarget(null)}
         onConfirm={confirmDeleteTask}
+        loading={deleteLoading}
       />
     </div>
   );
@@ -849,8 +892,9 @@ function TaskModal({
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-2xl bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-400 px-5 py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-400 px-5 py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
               >
+                {loading && <ButtonSpinner />}
                 {loading ? "Please wait..." : submitText}
               </button>
             </form>
@@ -868,6 +912,7 @@ function ConfirmDialog({
   confirmText,
   onClose,
   onConfirm,
+  loading = false,
 }) {
   return (
     <AnimatePresence>
@@ -885,15 +930,18 @@ function ConfirmDialog({
             <div className="mt-6 flex gap-3">
               <button
                 onClick={onClose}
-                className="flex-1 rounded-2xl border border-white/10 px-4 py-3"
+                disabled={loading}
+                className="flex-1 rounded-2xl border border-white/10 px-4 py-3 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Cancel
               </button>
               <button
                 onClick={onConfirm}
-                className="flex-1 rounded-2xl bg-red-500/20 px-4 py-3 font-semibold text-red-300"
+                disabled={loading}
+                className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-red-500/20 px-4 py-3 font-semibold text-red-300 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {confirmText}
+                {loading && <ButtonSpinner size={14} />}
+                {loading ? "Deleting..." : confirmText}
               </button>
             </div>
           </motion.div>
@@ -963,6 +1011,16 @@ function DueBadge({ task }) {
   }
 
   return null;
+}
+
+function ButtonSpinner({ size = 16 }) {
+  return (
+    <span
+      className="inline-block animate-spin rounded-full border-2 border-white/30 border-t-white"
+      style={{ width: size, height: size }}
+      aria-hidden="true"
+    />
+  );
 }
 
 function TaskSkeleton() {

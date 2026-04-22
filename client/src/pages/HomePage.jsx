@@ -1,5 +1,11 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle2, Sparkles, TimerReset, ShieldCheck } from "lucide-react";
+import {
+  CheckCircle2,
+  Sparkles,
+  TimerReset,
+  ShieldCheck,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 const features = [
@@ -26,6 +32,12 @@ const features = [
 ];
 
 export default function HomePage() {
+  const [loadingRoute, setLoadingRoute] = useState("");
+
+  const handleNavigate = (route) => {
+    setLoadingRoute(route);
+  };
+
   return (
     <div className="min-h-screen px-6 py-8 md:px-10 lg:px-16">
       <nav className="glass mx-auto flex max-w-7xl items-center justify-between rounded-3xl px-5 py-4">
@@ -42,15 +54,24 @@ export default function HomePage() {
         <div className="hidden items-center gap-3 md:flex">
           <Link
             to="/login"
-            className="rounded-2xl border border-white/15 px-4 py-2 text-sm text-white/90 transition hover:bg-white/10"
+            onClick={() => handleNavigate("/login")}
+            className={`inline-flex items-center gap-2 rounded-2xl border border-white/15 px-4 py-2 text-sm text-white/90 transition hover:bg-white/10 ${
+              loadingRoute === "/login" ? "pointer-events-none opacity-70" : ""
+            }`}
           >
-            Log In
+            {loadingRoute === "/login" && <ButtonSpinner size={14} />}
+            {loadingRoute === "/login" ? "Opening..." : "Log In"}
           </Link>
+
           <Link
             to="/register"
-            className="rounded-2xl bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-400 px-4 py-2 text-sm font-semibold text-white shadow-lg transition hover:scale-[1.02]"
+            onClick={() => handleNavigate("/register")}
+            className={`inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-400 px-4 py-2 text-sm font-semibold text-white shadow-lg transition hover:scale-[1.02] ${
+              loadingRoute === "/register" ? "pointer-events-none opacity-80" : ""
+            }`}
           >
-            Get Started
+            {loadingRoute === "/register" && <ButtonSpinner size={14} />}
+            {loadingRoute === "/register" ? "Opening..." : "Get Started"}
           </Link>
         </div>
       </nav>
@@ -67,7 +88,8 @@ export default function HomePage() {
           </p>
 
           <h2 className="max-w-2xl text-4xl font-black leading-tight md:text-6xl">
-            Build your day with a <span className="gradient-text">powerful</span> task workspace
+            Build your day with a <span className="gradient-text">powerful</span>{" "}
+            task workspace
           </h2>
 
           <p className="mt-6 max-w-xl text-base leading-7 text-slate-300 md:text-lg">
@@ -78,15 +100,30 @@ export default function HomePage() {
           <div className="mt-8 flex flex-wrap gap-4">
             <Link
               to="/dashboard"
-              className="rounded-2xl bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-400 px-6 py-3 font-semibold text-white shadow-xl transition hover:scale-[1.03]"
+              onClick={() => handleNavigate("/dashboard")}
+              className={`inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-400 px-6 py-3 font-semibold text-white shadow-xl transition hover:scale-[1.03] ${
+                loadingRoute === "/dashboard"
+                  ? "pointer-events-none opacity-80"
+                  : ""
+              }`}
             >
-              Launch Dashboard
+              {loadingRoute === "/dashboard" && <ButtonSpinner />}
+              {loadingRoute === "/dashboard"
+                ? "Opening..."
+                : "Launch Dashboard"}
             </Link>
+
             <Link
               to="/register"
-              className="glass rounded-2xl px-6 py-3 font-medium text-white transition hover:bg-white/10"
+              onClick={() => handleNavigate("/register-demo")}
+              className={`glass inline-flex items-center gap-2 rounded-2xl px-6 py-3 font-medium text-white transition hover:bg-white/10 ${
+                loadingRoute === "/register-demo"
+                  ? "pointer-events-none opacity-80"
+                  : ""
+              }`}
             >
-              View Demo
+              {loadingRoute === "/register-demo" && <ButtonSpinner />}
+              {loadingRoute === "/register-demo" ? "Opening..." : "View Demo"}
             </Link>
           </div>
         </motion.div>
@@ -172,9 +209,21 @@ function TaskPreview({ title, status }) {
         <p className="font-medium">{title}</p>
         <p className="text-sm text-slate-400">Productivity workflow</p>
       </div>
-      <span className={`rounded-full px-3 py-1 text-xs font-medium ${statusClasses[status]}`}>
+      <span
+        className={`rounded-full px-3 py-1 text-xs font-medium ${statusClasses[status]}`}
+      >
         {status}
       </span>
     </div>
+  );
+}
+
+function ButtonSpinner({ size = 16 }) {
+  return (
+    <span
+      className="inline-block animate-spin rounded-full border-2 border-white/30 border-t-white"
+      style={{ width: size, height: size }}
+      aria-hidden="true"
+    />
   );
 }
