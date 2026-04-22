@@ -8,21 +8,37 @@ export default function ResetPasswordPage() {
   const { token } = useParams();
   const navigate = useNavigate();
 
-  const [password, setPassword] = useState("");
+  const [form, setForm] = useState({
+    password: "",
+    confirmPassword: "",
+  });
+
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!password) {
-      toast.error("Please enter a new password");
+    if (!form.password || !form.confirmPassword) {
+      toast.error("Please fill in both password fields");
+      return;
+    }
+
+    if (form.password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+
+    if (form.password !== form.confirmPassword) {
+      toast.error("Passwords do not match");
       return;
     }
 
     setLoading(true);
 
     try {
-      await API.post(`/auth/reset-password/${token}`, { password });
+      await API.post(`/auth/reset-password/${token}`, {
+        password: form.password,
+      });
       toast.success("Password reset successful!");
       navigate("/login");
     } catch (error) {
@@ -44,15 +60,27 @@ export default function ResetPasswordPage() {
       >
         <h2 className="mb-2 text-3xl font-black">Reset Password</h2>
         <p className="mb-6 text-sm text-slate-300">
-          Enter your new password
+          Enter your new password and confirm it.
         </p>
 
         <input
           type="password"
           placeholder="New password"
+          className="mb-4 w-full rounded-xl bg-white/5 p-3 outline-none"
+          value={form.password}
+          onChange={(e) =>
+            setForm({ ...form, password: e.target.value })
+          }
+        />
+
+        <input
+          type="password"
+          placeholder="Confirm new password"
           className="mb-6 w-full rounded-xl bg-white/5 p-3 outline-none"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={form.confirmPassword}
+          onChange={(e) =>
+            setForm({ ...form, confirmPassword: e.target.value })
+          }
         />
 
         <button
