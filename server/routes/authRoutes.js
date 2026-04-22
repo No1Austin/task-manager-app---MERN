@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const User = require("../models/User");
 
+
 const router = express.Router();
 
 // create JWT
@@ -189,6 +190,7 @@ This link will expire in 15 minutes.
 });
 
 // RESET PASSWORD
+
 router.post("/reset-password/:token", async (req, res) => {
   try {
     const { password } = req.body;
