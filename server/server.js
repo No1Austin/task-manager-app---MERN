@@ -11,7 +11,10 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
+  "http://localhost:5173",
   "https://task-manager-app-mern-rlew.vercel.app",
+  "https://task-manager-app-mern-wheat.vercel.app",
+  "https://task-manager-app-mern-git-main-austins-projects-f4744c22.vercel.app",
 ];
 
 app.use(
