@@ -14,7 +14,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://task-manager-app-mern-wheat.vercel.app",
+      "https://task-manager-app-mern-rlew.vercel.app",
     ],
     credentials: true,
   })
