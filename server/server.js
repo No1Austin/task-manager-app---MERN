@@ -6,8 +6,6 @@ const mongoose = require("mongoose");
 const authRoutes = require("./routes/authRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 
-
-
 dotenv.config();
 
 const app = express();
@@ -16,11 +14,14 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://task-manager-app-mern-rlew.vercel.app",
+      "https://task-manager-app-mern-wheat.vercel.app",
     ],
     credentials: true,
   })
 );
+
+app.use(express.json());
+app.use(cookieParser());
 
 app.get("/api/health", (req, res) => {
   res.status(200).json({
