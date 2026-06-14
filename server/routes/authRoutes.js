@@ -3,19 +3,16 @@ const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-const User = require("../models/User");
-
+const { supabase } = require("../config/supabase");
 
 const router = express.Router();
 
-// create JWT
 const createToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: "7d",
   });
 };
 
-// auth middleware for /me
 const protect = async (req, res, next) => {
   try {
     let token = req.headers.authorization;
@@ -28,19 +25,32 @@ const protect = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const user = await User.findById(decoded.id).select("-password");
-    if (!user) {
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("id, name, email, theme, subscription_status, trial_start_date, trial_ends_at")
+      .eq("id", decoded.id)
+      .single();
+
+    if (error || !user) {
       return res.status(401).json({ message: "User not found" });
     }
 
-    req.user = user;
+    req.user = {
+      _id: user.id,
+      name: user.name,
+      email: user.email,
+      theme: user.theme,
+      subscriptionStatus: user.subscription_status,
+      trialStartDate: user.trial_start_date,
+      trialEndsAt: user.trial_ends_at,
+    };
+
     next();
   } catch (error) {
     return res.status(401).json({ message: "Not authorized" });
   }
 };
 
-// REGISTER
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -49,7 +59,12 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ message: "Please fill all fields" });
     }
 
-    const existingUser = await User.findOne({ email });
+    const { data: existingUser } = await supabase
+      .from("users")
+      .select("id")
+      .eq("email", email)
+      .maybeSingle();
+
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -59,27 +74,38 @@ router.post("/register", async (req, res) => {
     const trialStart = new Date();
     const trialEnd = new Date(trialStart.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-    const user = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-      subscriptionStatus: "trial",
-      trialStartDate: trialStart,
-      trialEndsAt: trialEnd,
-    });
+    const { data: user, error } = await supabase
+      .from("users")
+      .insert([
+        {
+          name,
+          email,
+          password: hashedPassword,
+          theme: "light",
+          subscription_status: "trial",
+          trial_start_date: trialStart.toISOString(),
+          trial_ends_at: trialEnd.toISOString(),
+        },
+      ])
+      .select()
+      .single();
 
-    const token = createToken(user._id);
+    if (error) {
+      return res.status(400).json({ message: error.message });
+    }
+
+    const token = createToken(user.id);
 
     res.status(201).json({
       token,
       user: {
-        _id: user._id,
+        _id: user.id,
         name: user.name,
         email: user.email,
         theme: user.theme,
-        subscriptionStatus: user.subscriptionStatus,
-        trialStartDate: user.trialStartDate,
-        trialEndsAt: user.trialEndsAt,
+        subscriptionStatus: user.subscription_status,
+        trialStartDate: user.trial_start_date,
+        trialEndsAt: user.trial_ends_at,
       },
     });
   } catch (error) {
@@ -87,7 +113,6 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// LOGIN
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -96,28 +121,34 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Please enter email and password" });
     }
 
-    const user = await User.findOne({ email });
-    if (!user) {
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", email)
+      .maybeSingle();
+
+    if (error || !user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
+
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    const token = createToken(user._id);
+    const token = createToken(user.id);
 
     res.status(200).json({
       token,
       user: {
-        _id: user._id,
+        _id: user.id,
         name: user.name,
         email: user.email,
         theme: user.theme,
-        subscriptionStatus: user.subscriptionStatus,
-        trialStartDate: user.trialStartDate,
-        trialEndsAt: user.trialEndsAt,
+        subscriptionStatus: user.subscription_status,
+        trialStartDate: user.trial_start_date,
+        trialEndsAt: user.trial_ends_at,
       },
     });
   } catch (error) {
@@ -125,18 +156,19 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// CURRENT USER
 router.get("/me", protect, async (req, res) => {
   res.status(200).json(req.user);
 });
-
-// FORGOT PASSWORD
 
 router.post("/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
 
-    const user = await User.findOne({ email });
+    const { data: user } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", email)
+      .maybeSingle();
 
     if (!user) {
       return res.status(200).json({
@@ -146,14 +178,20 @@ router.post("/forgot-password", async (req, res) => {
 
     const resetToken = crypto.randomBytes(32).toString("hex");
 
-    user.resetPasswordToken = crypto
+    const hashedToken = crypto
       .createHash("sha256")
       .update(resetToken)
       .digest("hex");
 
-    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
+    const resetExpire = new Date(Date.now() + 15 * 60 * 1000).toISOString();
 
-    await user.save();
+    await supabase
+      .from("users")
+      .update({
+        reset_password_token: hashedToken,
+        reset_password_expire: resetExpire,
+      })
+      .eq("id", user.id);
 
     const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
 
@@ -189,8 +227,6 @@ This link will expire in 15 minutes.
   }
 });
 
-// RESET PASSWORD
-
 router.post("/reset-password/:token", async (req, res) => {
   try {
     const { password } = req.body;
@@ -204,22 +240,29 @@ router.post("/reset-password/:token", async (req, res) => {
       .update(req.params.token)
       .digest("hex");
 
-    const user = await User.findOne({
-      resetPasswordToken: hashedToken,
-      resetPasswordExpire: { $gt: Date.now() },
-    });
+    const now = new Date().toISOString();
 
-    if (!user) {
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("reset_password_token", hashedToken)
+      .gt("reset_password_expire", now)
+      .maybeSingle();
+
+    if (error || !user) {
       return res.status(400).json({ message: "Invalid or expired reset token" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    user.password = hashedPassword;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpire = undefined;
-
-    await user.save();
+    await supabase
+      .from("users")
+      .update({
+        password: hashedPassword,
+        reset_password_token: null,
+        reset_password_expire: null,
+      })
+      .eq("id", user.id);
 
     res.status(200).json({ message: "Password has been reset successfully" });
   } catch (error) {
