@@ -34,12 +34,19 @@ export function AuthProvider({ children }) {
     const { data } = await API.post("/auth/login", { email, password });
     localStorage.setItem("token", data.token);
     setUser(data.user);
+    return data;
   };
 
   const register = async (name, email, password) => {
-    const { data } = await API.post("/auth/register", { name, email, password });
+    const { data } = await API.post("/auth/register", {
+      name,
+      email,
+      password,
+    });
+
     localStorage.setItem("token", data.token);
     setUser(data.user);
+    return data;
   };
 
   const logout = () => {
@@ -48,7 +55,16 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, login, register, logout, authLoading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        login,
+        register,
+        logout,
+        authLoading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

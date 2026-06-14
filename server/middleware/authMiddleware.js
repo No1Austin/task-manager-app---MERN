@@ -1,26 +1,39 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+const { supabase } = require("../config/supabase");
 
-module.exports = async (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
+    let token = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "Not authorized" });
+    if (!token || !token.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Not authorized, no token" });
     }
 
-    const token = authHeader.split(" ")[1];
+    token = token.split(" ")[1];
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const user = await User.findById(decoded.id).select("-password");
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("id, name, email")
+      .eq("id", decoded.id)
+      .single();
 
-    if (!user) {
-      return res.status(401).json({ message: "User not found" });
+    if (error || !user) {
+      return res.status(401).json({ message: "Not authorized, user not found" });
     }
 
-    req.user = user;
+    req.user = {
+      _id: user.id,
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    };
+
     next();
   } catch (error) {
-    res.status(401).json({ message: "Token invalid or expired" });
+    return res.status(401).json({ message: "Not authorized, token failed" });
   }
 };
+
+module.exports = authMiddleware;
