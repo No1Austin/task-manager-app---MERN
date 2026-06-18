@@ -1,10 +1,21 @@
-const Task = require("../models/Task");
+const { supabase } = require("../config/supabase");
 
 exports.getTasks = async (req, res) => {
   try {
-    const tasks = await Task.find({ user: req.user._id }).sort({ createdAt: -1 });
-    res.status(200).json(tasks);
+    const { data, error } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("user_id", req.user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("SUPABASE GET TASKS ERROR:", error);
+      return res.status(400).json({ message: error.message });
+    }
+
+    res.status(200).json(data);
   } catch (error) {
+    console.error("GET TASKS ERROR:", error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -17,52 +28,75 @@ exports.createTask = async (req, res) => {
       return res.status(400).json({ message: "Title is required" });
     }
 
-    const task = await Task.create({
-      user: req.user._id,
-      title,
-      description,
-      status,
-      priority,
-      deadline: deadline || null,
-    });
+    const { data, error } = await supabase
+      .from("tasks")
+      .insert([
+        {
+          user_id: req.user.id,
+          title,
+          description: description || "",
+          status: status || "pending",
+          priority: priority || "medium",
+          deadline: deadline || null,
+        },
+      ])
+      .select()
+      .single();
 
-    res.status(201).json(task);
+    if (error) {
+      console.error("SUPABASE CREATE TASK ERROR:", error);
+      return res.status(400).json({ message: error.message });
+    }
+
+    res.status(201).json(data);
   } catch (error) {
+    console.error("CREATE TASK ERROR:", error);
     res.status(500).json({ message: error.message });
   }
 };
 
 exports.updateTask = async (req, res) => {
   try {
-    const task = await Task.findOne({ _id: req.params.id, user: req.user._id });
+    const { data, error } = await supabase
+      .from("tasks")
+      .update(req.body)
+      .eq("id", req.params.id)
+      .eq("user_id", req.user.id)
+      .select()
+      .single();
 
-    if (!task) {
+    if (error) {
+      console.error("SUPABASE UPDATE TASK ERROR:", error);
+      return res.status(400).json({ message: error.message });
+    }
+
+    if (!data) {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    const updatedTask = await Task.findByIdAndUpdate(
-      req.params.id,
-      { ...req.body },
-      { new: true }
-    );
-
-    res.status(200).json(updatedTask);
+    res.status(200).json(data);
   } catch (error) {
+    console.error("UPDATE TASK ERROR:", error);
     res.status(500).json({ message: error.message });
   }
 };
 
 exports.deleteTask = async (req, res) => {
   try {
-    const task = await Task.findOne({ _id: req.params.id, user: req.user._id });
+    const { error } = await supabase
+      .from("tasks")
+      .delete()
+      .eq("id", req.params.id)
+      .eq("user_id", req.user.id);
 
-    if (!task) {
-      return res.status(404).json({ message: "Task not found" });
+    if (error) {
+      console.error("SUPABASE DELETE TASK ERROR:", error);
+      return res.status(400).json({ message: error.message });
     }
 
-    await task.deleteOne();
     res.status(200).json({ message: "Task deleted successfully" });
   } catch (error) {
+    console.error("DELETE TASK ERROR:", error);
     res.status(500).json({ message: error.message });
   }
 };
