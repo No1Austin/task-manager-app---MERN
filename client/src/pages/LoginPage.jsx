@@ -1,7 +1,9 @@
+import { motion } from "framer-motion";
+import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import API from "../services/api";
 
@@ -13,7 +15,7 @@ export default function LoginPage() {
     email: "",
     password: "",
   });
-
+const [showPassword, setShowPassword] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
@@ -82,16 +84,23 @@ export default function LoginPage() {
             required
           />
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={form.password}
-            className="mb-3 w-full rounded-xl bg-white/5 p-3 outline-none"
-            onChange={(e) =>
-              setForm({ ...form, password: e.target.value })
-            }
-            required
-          />
+          <div className="relative mb-4">
+  <input
+    type={showPassword ? "text" : "password"}
+    placeholder="Password"
+    className="w-full rounded-xl bg-white/5 p-3 pr-12 outline-none"
+    value={form.password}
+    onChange={(e) => setForm({ ...form, password: e.target.value })}
+  />
+
+  <button
+    type="button"
+    onClick={() => setShowPassword((prev) => !prev)}
+    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+  >
+    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+  </button>
+</div>
 
           <div className="mb-6 text-right">
             <button

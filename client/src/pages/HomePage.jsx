@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+
 import {
   CheckCircle2,
   Sparkles,
   TimerReset,
   ShieldCheck,
+  ExternalLink,
+  Building2,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -25,9 +28,9 @@ const features = [
     icon: ShieldCheck,
   },
   {
-    title: "Powerful Experience",
-    description: "Colorful UI with fluid motion and a premium dashboard feel.",
-    icon: Sparkles,
+    title: "Built by AEMA Systems",
+    description: "Part of AEMA Systems’ growing suite of intelligent business tools.",
+    icon: Building2,
   },
 ];
 
@@ -45,13 +48,34 @@ export default function HomePage() {
           <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-violet-500 via-cyan-400 to-amber-300 text-slate-950 font-black shadow-lg">
             T
           </div>
+
           <div>
             <h1 className="text-lg font-bold">TaskFlow</h1>
-            <p className="text-sm text-slate-300">Modern MERN task manager</p>
+            <p className="text-sm text-slate-300">
+              A product of{" "}
+              <a
+                href="https://aemasystems.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-cyan-300 hover:text-cyan-200"
+              >
+                AEMA Systems
+              </a>
+            </p>
           </div>
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
+          <a
+            href="https://aemasystems.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-2xl border border-cyan-400/30 px-4 py-2 text-sm text-cyan-200 transition hover:bg-cyan-400/10"
+          >
+            AEMA Systems
+            <ExternalLink size={14} />
+          </a>
+
           <Link
             to="/login"
             onClick={() => handleNavigate("/login")}
@@ -84,18 +108,25 @@ export default function HomePage() {
         >
           <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-200">
             <Sparkles size={16} />
-            Smarter productivity starts here
+            TaskFlow by AEMA Systems
           </p>
 
           <h2 className="max-w-2xl text-4xl font-black leading-tight md:text-6xl">
-            Build your day with a <span className="gradient-text">powerful</span>{" "}
-            task workspace
+            Build your day with a{" "}
+            <span className="gradient-text">powerful</span> task workspace
           </h2>
 
           <p className="mt-6 max-w-xl text-base leading-7 text-slate-300 md:text-lg">
-            TaskFlow helps users organize tasks, manage deadlines, track progress,
-            and stay focused through a polished, colorful, modern interface.
+            TaskFlow is a productivity tool from AEMA Systems, built to help
+            users organize tasks, manage deadlines, track progress, and stay
+            focused through a polished, modern interface.
           </p>
+
+          <div className="mt-6 rounded-3xl border border-white/10 bg-white/5 p-4 text-sm leading-6 text-slate-300">
+            <span className="font-semibold text-cyan-300">AEMA Systems</span>{" "}
+            builds intelligent software tools for business operations,
+            automation, productivity, and growth.
+          </div>
 
           <div className="mt-8 flex flex-wrap gap-4">
             <Link
@@ -125,6 +156,16 @@ export default function HomePage() {
               {loadingRoute === "/register-demo" && <ButtonSpinner />}
               {loadingRoute === "/register-demo" ? "Opening..." : "View Demo"}
             </Link>
+
+            <a
+              href="https://aemasystems.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-2xl border border-cyan-400/30 px-6 py-3 font-medium text-cyan-200 transition hover:bg-cyan-400/10"
+            >
+              Return to AEMA Systems
+              <ExternalLink size={16} />
+            </a>
           </div>
         </motion.div>
 
@@ -138,6 +179,19 @@ export default function HomePage() {
           <div className="absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-cyan-400/20 blur-3xl" />
 
           <div className="relative space-y-4">
+            <div className="flex items-center justify-between rounded-3xl border border-white/10 bg-white/5 p-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.25em] text-slate-400">
+                  Product
+                </p>
+                <h3 className="mt-1 text-xl font-black">TaskFlow</h3>
+              </div>
+
+              <span className="rounded-full bg-cyan-500/20 px-3 py-1 text-xs font-semibold text-cyan-300">
+                AEMA Systems
+              </span>
+            </div>
+
             <div className="glass rounded-3xl p-4">
               <div className="mb-3 flex items-center justify-between">
                 <h3 className="font-semibold">Today’s Focus</h3>
@@ -147,9 +201,9 @@ export default function HomePage() {
               </div>
 
               <div className="space-y-3">
-                <TaskPreview title="Design dashboard UI" status="In Progress" />
-                <TaskPreview title="Connect auth API" status="Pending" />
-                <TaskPreview title="Deploy backend" status="Completed" />
+                <TaskPreview title="Follow up with new clients" />
+                <TaskPreview title="Prepare monthly business report" />
+                <TaskPreview title="Launch marketing campaign" />
               </div>
             </div>
 
@@ -158,6 +212,7 @@ export default function HomePage() {
                 <p className="text-sm text-slate-300">Tasks Completed</p>
                 <h4 className="mt-2 text-3xl font-black">24</h4>
               </div>
+
               <div className="glass rounded-3xl p-4">
                 <p className="text-sm text-slate-300">Upcoming Deadlines</p>
                 <h4 className="mt-2 text-3xl font-black">07</h4>
@@ -168,6 +223,13 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto max-w-7xl pb-16">
+        <div className="mb-8 text-center">
+          <p className="text-xs uppercase tracking-[0.3em] text-cyan-300">
+            AEMA Systems Product Suite
+          </p>
+          <h2 className="mt-3 text-3xl font-black">Why TaskFlow?</h2>
+        </div>
+
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
           {features.map((feature, index) => {
             const Icon = feature.icon;
@@ -183,7 +245,9 @@ export default function HomePage() {
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10">
                   <Icon className="text-cyan-300" size={22} />
                 </div>
+
                 <h3 className="text-lg font-semibold">{feature.title}</h3>
+
                 <p className="mt-2 text-sm leading-6 text-slate-300">
                   {feature.description}
                 </p>
@@ -192,6 +256,31 @@ export default function HomePage() {
           })}
         </div>
       </section>
+
+      <footer className="mx-auto max-w-7xl border-t border-white/10 py-8 text-center">
+        <p className="text-sm text-slate-400">
+          TaskFlow is a product of{" "}
+          <a
+            href="https://aemasystems.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-cyan-300 hover:text-cyan-200"
+          >
+            AEMA Systems
+          </a>
+          .
+        </p>
+
+        <a
+          href="https://aemasystems.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 inline-flex items-center gap-2 rounded-2xl border border-white/10 px-5 py-2 text-sm text-white/80 transition hover:bg-white/10"
+        >
+          Return to aemasystems.com
+          <ExternalLink size={14} />
+        </a>
+      </footer>
     </div>
   );
 }
@@ -209,6 +298,7 @@ function TaskPreview({ title, status }) {
         <p className="font-medium">{title}</p>
         <p className="text-sm text-slate-400">Productivity workflow</p>
       </div>
+
       <span
         className={`rounded-full px-3 py-1 text-xs font-medium ${statusClasses[status]}`}
       >
