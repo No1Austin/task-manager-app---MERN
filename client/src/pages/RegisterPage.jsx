@@ -1,6 +1,6 @@
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
@@ -62,7 +62,7 @@ export default function RegisterPage() {
         <input
           type="text"
           placeholder="Full Name"
-          className="mb-4 w-full rounded-xl bg-white/5 p-3 outline-none"
+          className="mb-4 w-full rounded-xl bg-white text-[#070b1a]/5 p-3 outline-none"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
@@ -70,7 +70,7 @@ export default function RegisterPage() {
         <input
           type="email"
           placeholder="Email"
-          className="mb-4 w-full rounded-xl bg-white/5 p-3 outline-none"
+          className="mb-4 w-full rounded-xl bg-white text-[#070b1a]/5 p-3 outline-none"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
         />
@@ -79,7 +79,7 @@ export default function RegisterPage() {
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Password"
-            className="w-full rounded-xl bg-white/5 p-3 pr-12 outline-none"
+            className="w-full rounded-xl bg-white text-[#070b1a]/5 p-3 pr-12 outline-none"
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
           />
@@ -97,7 +97,7 @@ export default function RegisterPage() {
           <input
             type={showConfirmPassword ? "text" : "password"}
             placeholder="Confirm Password"
-            className="w-full rounded-xl bg-white/5 p-3 pr-12 outline-none"
+            className="w-full rounded-xl bg-white text-[#070b1a]/5 p-3 pr-12 outline-none"
             value={form.confirmPassword}
             onChange={(e) =>
               setForm({ ...form, confirmPassword: e.target.value })

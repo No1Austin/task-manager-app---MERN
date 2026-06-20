@@ -13,6 +13,18 @@ const createToken = (userId) => {
   });
 };
 
+const formatUser = (user) => ({
+  _id: user.id,
+  id: user.id,
+  name: user.name,
+  email: user.email,
+  theme: user.theme,
+  plan: user.plan || "trial",
+  subscriptionStatus: user.subscription_status,
+  trialStartDate: user.trial_start_date,
+  trialEndsAt: user.trial_ends_at,
+});
+
 const protect = async (req, res, next) => {
   try {
     let token = req.headers.authorization;
@@ -27,7 +39,9 @@ const protect = async (req, res, next) => {
 
     const { data: user, error } = await supabase
       .from("users")
-      .select("id, name, email, theme, subscription_status, trial_start_date, trial_ends_at")
+      .select(
+        "id, name, email, theme, plan, subscription_status, trial_start_date, trial_ends_at"
+      )
       .eq("id", decoded.id)
       .single();
 
@@ -35,18 +49,10 @@ const protect = async (req, res, next) => {
       return res.status(401).json({ message: "User not found" });
     }
 
-    req.user = {
-      _id: user.id,
-      name: user.name,
-      email: user.email,
-      theme: user.theme,
-      subscriptionStatus: user.subscription_status,
-      trialStartDate: user.trial_start_date,
-      trialEndsAt: user.trial_ends_at,
-    };
+    req.user = formatUser(user);
 
     next();
-  } catch (error) {
+  } catch {
     return res.status(401).json({ message: "Not authorized" });
   }
 };
@@ -72,7 +78,9 @@ router.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const trialStart = new Date();
-    const trialEnd = new Date(trialStart.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const trialEnd = new Date(
+      trialStart.getTime() + 7 * 24 * 60 * 60 * 1000
+    );
 
     const { data: user, error } = await supabase
       .from("users")
@@ -82,12 +90,15 @@ router.post("/register", async (req, res) => {
           email,
           password: hashedPassword,
           theme: "light",
+          plan: "trial",
           subscription_status: "trial",
           trial_start_date: trialStart.toISOString(),
           trial_ends_at: trialEnd.toISOString(),
         },
       ])
-      .select()
+      .select(
+        "id, name, email, theme, plan, subscription_status, trial_start_date, trial_ends_at"
+      )
       .single();
 
     if (error) {
@@ -96,20 +107,12 @@ router.post("/register", async (req, res) => {
 
     const token = createToken(user.id);
 
-    res.status(201).json({
+    return res.status(201).json({
       token,
-      user: {
-        _id: user.id,
-        name: user.name,
-        email: user.email,
-        theme: user.theme,
-        subscriptionStatus: user.subscription_status,
-        trialStartDate: user.trial_start_date,
-        trialEndsAt: user.trial_ends_at,
-      },
+      user: formatUser(user),
     });
-  } catch (error) {
-    res.status(500).json({ message: "Registration failed" });
+  } catch {
+    return res.status(500).json({ message: "Registration failed" });
   }
 });
 
@@ -118,7 +121,9 @@ router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "Please enter email and password" });
+      return res.status(400).json({
+        message: "Please enter email and password",
+      });
     }
 
     const { data: user, error } = await supabase
@@ -139,25 +144,17 @@ router.post("/login", async (req, res) => {
 
     const token = createToken(user.id);
 
-    res.status(200).json({
+    return res.status(200).json({
       token,
-      user: {
-        _id: user.id,
-        name: user.name,
-        email: user.email,
-        theme: user.theme,
-        subscriptionStatus: user.subscription_status,
-        trialStartDate: user.trial_start_date,
-        trialEndsAt: user.trial_ends_at,
-      },
+      user: formatUser(user),
     });
-  } catch (error) {
-    res.status(500).json({ message: "Login failed" });
+  } catch {
+    return res.status(500).json({ message: "Login failed" });
   }
 });
 
 router.get("/me", protect, async (req, res) => {
-  res.status(200).json(req.user);
+  return res.status(200).json(req.user);
 });
 
 router.post("/forgot-password", async (req, res) => {
@@ -219,11 +216,11 @@ This link will expire in 15 minutes.
       text: message,
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "If that email exists, a reset link has been sent",
     });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to send reset email" });
+  } catch {
+    return res.status(500).json({ message: "Failed to send reset email" });
   }
 });
 
@@ -250,7 +247,9 @@ router.post("/reset-password/:token", async (req, res) => {
       .maybeSingle();
 
     if (error || !user) {
-      return res.status(400).json({ message: "Invalid or expired reset token" });
+      return res.status(400).json({
+        message: "Invalid or expired reset token",
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -264,9 +263,11 @@ router.post("/reset-password/:token", async (req, res) => {
       })
       .eq("id", user.id);
 
-    res.status(200).json({ message: "Password has been reset successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to reset password" });
+    return res.status(200).json({
+      message: "Password has been reset successfully",
+    });
+  } catch {
+    return res.status(500).json({ message: "Failed to reset password" });
   }
 });
 

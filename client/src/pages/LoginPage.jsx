@@ -1,10 +1,10 @@
-import { motion } from "framer-motion";
-import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
+
+import { useAuth } from "../context/useAuth";
 import API from "../services/api";
 
 export default function LoginPage() {
@@ -15,7 +15,8 @@ export default function LoginPage() {
     email: "",
     password: "",
   });
-const [showPassword, setShowPassword] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
@@ -39,7 +40,7 @@ const [showPassword, setShowPassword] = useState(false);
   const handleForgotPassword = async (e) => {
     e.preventDefault();
 
-    if (!resetEmail) {
+    if (!resetEmail.trim()) {
       toast.error("Please enter your email");
       return;
     }
@@ -47,14 +48,15 @@ const [showPassword, setShowPassword] = useState(false);
     setResetLoading(true);
 
     try {
-      await API.post("/auth/forgot-password", { email: resetEmail });
+      await API.post("/auth/forgot-password", {
+        email: resetEmail,
+      });
+
       toast.success("Password reset link sent to your email");
       setShowForgotPassword(false);
       setResetEmail("");
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Failed to send reset link"
-      );
+      toast.error(error.response?.data?.message || "Failed to send reset link");
     } finally {
       setResetLoading(false);
     }
@@ -68,6 +70,7 @@ const [showPassword, setShowPassword] = useState(false);
         className="glass w-full max-w-md rounded-3xl p-8"
       >
         <h2 className="mb-2 text-3xl font-black">Login</h2>
+
         <p className="mb-6 text-sm text-slate-300">
           Welcome back. Sign in to continue.
         </p>
@@ -77,30 +80,40 @@ const [showPassword, setShowPassword] = useState(false);
             type="email"
             placeholder="Email"
             value={form.email}
-            className="mb-4 w-full rounded-xl bg-white/5 p-3 outline-none"
+            className="mb-4 w-full rounded-xl bg-white text-[#070b1a]/5 p-3 outline-none"
             onChange={(e) =>
-              setForm({ ...form, email: e.target.value })
+              setForm({
+                ...form,
+                email: e.target.value,
+              })
             }
             required
           />
 
           <div className="relative mb-4">
-  <input
-    type={showPassword ? "text" : "password"}
-    placeholder="Password"
-    className="w-full rounded-xl bg-white/5 p-3 pr-12 outline-none"
-    value={form.password}
-    onChange={(e) => setForm({ ...form, password: e.target.value })}
-  />
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={form.password}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  password: e.target.value,
+                })
+              }
+              className="w-full rounded-xl bg-white text-[#070b1a]/5 p-3 pr-12 outline-none"
+              required
+            />
 
-  <button
-    type="button"
-    onClick={() => setShowPassword((prev) => !prev)}
-    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
-  >
-    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-  </button>
-</div>
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
 
           <div className="mb-6 text-right">
             <button
@@ -129,9 +142,10 @@ const [showPassword, setShowPassword] = useState(false);
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4"
+              className="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-white text-[#070b1a]/5 p-4"
             >
               <h3 className="mb-2 text-lg font-semibold">Reset Password</h3>
+
               <p className="mb-4 text-sm text-slate-300">
                 Enter your email and we’ll send you a reset link.
               </p>
@@ -141,7 +155,7 @@ const [showPassword, setShowPassword] = useState(false);
                 placeholder="Enter your email"
                 value={resetEmail}
                 onChange={(e) => setResetEmail(e.target.value)}
-                className="mb-4 w-full rounded-xl bg-white/5 p-3 outline-none"
+                className="mb-4 w-full rounded-xl bg-white text-[#070b1a]/5 p-3 outline-none"
                 required
               />
 
@@ -172,7 +186,10 @@ function ButtonSpinner({ size = 16 }) {
   return (
     <span
       className="inline-block animate-spin rounded-full border-2 border-white/30 border-t-white"
-      style={{ width: size, height: size }}
+      style={{
+        width: size,
+        height: size,
+      }}
       aria-hidden="true"
     />
   );

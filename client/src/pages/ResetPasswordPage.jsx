@@ -66,7 +66,7 @@ export default function ResetPasswordPage() {
         <input
           type="password"
           placeholder="New password"
-          className="mb-4 w-full rounded-xl bg-white/5 p-3 outline-none"
+          className="mb-4 w-full rounded-xl bg-white text-[#070b1a]/5 p-3 outline-none"
           value={form.password}
           onChange={(e) =>
             setForm({ ...form, password: e.target.value })
@@ -76,7 +76,7 @@ export default function ResetPasswordPage() {
         <input
           type="password"
           placeholder="Confirm new password"
-          className="mb-6 w-full rounded-xl bg-white/5 p-3 outline-none"
+          className="mb-6 w-full rounded-xl bg-white text-[#070b1a]/5 p-3 outline-none"
           value={form.confirmPassword}
           onChange={(e) =>
             setForm({ ...form, confirmPassword: e.target.value })

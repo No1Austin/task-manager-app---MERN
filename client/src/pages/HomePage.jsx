@@ -79,7 +79,7 @@ export default function HomePage() {
           <Link
             to="/login"
             onClick={() => handleNavigate("/login")}
-            className={`inline-flex items-center gap-2 rounded-2xl border border-white/15 px-4 py-2 text-sm text-white/90 transition hover:bg-white/10 ${
+            className={`inline-flex items-center gap-2 rounded-2xl border border-white/15 px-4 py-2 text-sm text-white/90 transition hover:bg-white text-[#070b1a]/10 ${
               loadingRoute === "/login" ? "pointer-events-none opacity-70" : ""
             }`}
           >
@@ -122,7 +122,7 @@ export default function HomePage() {
             focused through a polished, modern interface.
           </p>
 
-          <div className="mt-6 rounded-3xl border border-white/10 bg-white/5 p-4 text-sm leading-6 text-slate-300">
+          <div className="mt-6 rounded-3xl border border-white/10 bg-white text-[#070b1a]/5 p-4 text-sm leading-6 text-slate-300">
             <span className="font-semibold text-cyan-300">AEMA Systems</span>{" "}
             builds intelligent software tools for business operations,
             automation, productivity, and growth.
@@ -147,7 +147,7 @@ export default function HomePage() {
             <Link
               to="/register"
               onClick={() => handleNavigate("/register-demo")}
-              className={`glass inline-flex items-center gap-2 rounded-2xl px-6 py-3 font-medium text-white transition hover:bg-white/10 ${
+              className={`glass inline-flex items-center gap-2 rounded-2xl px-6 py-3 font-medium text-white transition hover:bg-white text-[#070b1a]/10 ${
                 loadingRoute === "/register-demo"
                   ? "pointer-events-none opacity-80"
                   : ""
@@ -179,7 +179,7 @@ export default function HomePage() {
           <div className="absolute -bottom-16 -left-16 h-40 w-40 rounded-full bg-cyan-400/20 blur-3xl" />
 
           <div className="relative space-y-4">
-            <div className="flex items-center justify-between rounded-3xl border border-white/10 bg-white/5 p-4">
+            <div className="flex items-center justify-between rounded-3xl border border-white/10 bg-white text-[#070b1a]/5 p-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.25em] text-slate-400">
                   Product
@@ -242,7 +242,7 @@ export default function HomePage() {
                 transition={{ delay: 0.15 * index }}
                 className="glass rounded-[1.75rem] p-5"
               >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#070b1a]/10">
                   <Icon className="text-cyan-300" size={22} />
                 </div>
 
@@ -275,7 +275,7 @@ export default function HomePage() {
           href="https://aemasystems.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-4 inline-flex items-center gap-2 rounded-2xl border border-white/10 px-5 py-2 text-sm text-white/80 transition hover:bg-white/10"
+          className="mt-4 inline-flex items-center gap-2 rounded-2xl border border-white/10 px-5 py-2 text-sm text-white/80 transition hover:bg-white text-[#070b1a]/10"
         >
           Return to aemasystems.com
           <ExternalLink size={14} />
@@ -293,7 +293,7 @@ function TaskPreview({ title, status }) {
   };
 
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+    <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-white text-[#070b1a]/5 px-4 py-3">
       <div>
         <p className="font-medium">{title}</p>
         <p className="text-sm text-slate-400">Productivity workflow</p>
