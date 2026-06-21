@@ -32,7 +32,6 @@ export default function BookingRow({
 
   return (
     <div className="relative border-b border-white/10 bg-[#0f172a]/70 px-4 py-4 last:border-b-0 lg:grid lg:grid-cols-[1.4fr_1fr_1fr_0.7fr_0.8fr_1fr] lg:items-center lg:gap-4">
-      {/* Mobile dropdown top-right */}
       <div className="absolute right-3 top-3 z-50 lg:hidden">
         <BookingActionsDropdown
           booking={booking}
@@ -46,14 +45,13 @@ export default function BookingRow({
         />
       </div>
 
-      {/* Customer */}
-      <div className="flex items-start gap-3 pr-12 lg:pr-0">
+      <div className="flex items-start gap-3 pr-28 lg:pr-0">
         <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-cyan-400/10 text-cyan-300">
           <User size={20} />
         </div>
 
-        <div className="min-w-0">
-          <p className="break-words pr-1 font-black text-white">
+        <div className="min-w-0 flex-1">
+          <p className="break-words pr-1 font-black leading-6 text-white">
             {booking.customer_name || "Unnamed customer"}
           </p>
 
@@ -72,26 +70,28 @@ export default function BookingRow({
           </div>
 
           <div className="mt-2 space-y-1 text-sm text-slate-400">
-            <p className="flex items-center gap-2 break-all">
-              <Phone size={14} className="shrink-0" />
-              {booking.customer_phone || "No phone"}
-            </p>
+            <div className="flex items-start gap-2">
+              <Phone size={14} className="mt-0.5 shrink-0" />
+              <span className="break-words leading-5">
+                {booking.customer_phone || "No phone"}
+              </span>
+            </div>
 
-            <p className="flex items-center gap-2 break-all">
-              <Mail size={14} className="shrink-0" />
-              {booking.customer_email || "No email"}
-            </p>
+            <div className="flex max-w-[210px] items-start gap-2 sm:max-w-[260px] lg:max-w-none">
+              <Mail size={14} className="mt-0.5 shrink-0" />
+              <span className="break-words leading-5">
+                {booking.customer_email || "No email"}
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Service */}
-      <div className="mt-4 break-words text-sm font-semibold text-slate-200 lg:mt-0">
+      <div className="mt-4 break-words pr-28 text-sm font-semibold text-slate-200 lg:mt-0 lg:pr-0">
         {booking.service || "No service"}
       </div>
 
-      {/* Booking Date */}
-      <div className="mt-3 flex items-start gap-2 text-sm text-slate-300 lg:mt-0">
+      <div className="mt-3 flex items-start gap-2 pr-28 text-sm text-slate-300 lg:mt-0 lg:pr-0">
         <CalendarDays size={15} className="mt-0.5 shrink-0" />
         <span className="break-words">
           {booking.booking_date
@@ -110,7 +110,6 @@ export default function BookingRow({
           : "Not set"}
       </div>
 
-      {/* Mobile stacked action buttons */}
       <div className="absolute right-3 top-14 z-40 flex flex-col items-end gap-2 lg:hidden">
         {booking.customer_phone && (
           <a
@@ -149,7 +148,6 @@ export default function BookingRow({
         </button>
       </div>
 
-      {/* Desktop action buttons */}
       <div className="relative z-50 hidden items-center justify-end gap-2 lg:flex">
         {booking.customer_phone && (
           <a
