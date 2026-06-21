@@ -22,6 +22,9 @@ export default function LoginPage() {
   const [resetEmail, setResetEmail] = useState("");
   const [resetLoading, setResetLoading] = useState(false);
 
+  const inputClass =
+    "w-full rounded-2xl border border-cyan-400/20 bg-slate-950/70 p-4 text-slate-100 outline-none placeholder:text-slate-500 focus:border-cyan-400/60 focus:ring-4 focus:ring-cyan-400/10";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoginLoading(true);
@@ -63,15 +66,15 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
+    <div className="flex min-h-screen items-center justify-center px-4 py-10">
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass w-full max-w-md rounded-3xl p-8"
+        className="w-full max-w-md rounded-3xl border border-white/10 bg-slate-900/80 p-8 text-slate-100 shadow-2xl shadow-black/30 backdrop-blur-xl"
       >
-        <h2 className="mb-2 text-3xl font-black">Login</h2>
+        <h2 className="mb-2 text-4xl font-black text-slate-50">Login</h2>
 
-        <p className="mb-6 text-sm text-slate-300">
+        <p className="mb-6 text-base text-slate-300">
           Welcome back. Sign in to continue.
         </p>
 
@@ -80,7 +83,7 @@ export default function LoginPage() {
             type="email"
             placeholder="Email"
             value={form.email}
-            className="mb-4 w-full rounded-xl bg-white text-[#070b1a]/5 p-3 outline-none"
+            className={`${inputClass} mb-4`}
             onChange={(e) =>
               setForm({
                 ...form,
@@ -101,14 +104,14 @@ export default function LoginPage() {
                   password: e.target.value,
                 })
               }
-              className="w-full rounded-xl bg-white text-[#070b1a]/5 p-3 pr-12 outline-none"
+              className={`${inputClass} pr-12`}
               required
             />
 
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-cyan-300"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -119,7 +122,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setShowForgotPassword((prev) => !prev)}
-              className="text-sm text-cyan-300 hover:underline"
+              className="text-sm font-semibold text-cyan-300 hover:text-cyan-200 hover:underline"
             >
               Forgot password?
             </button>
@@ -128,7 +131,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loginLoading}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-500 to-cyan-400 py-3 font-bold disabled:cursor-not-allowed disabled:opacity-70"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-500 to-cyan-400 py-4 font-black text-white shadow-lg shadow-cyan-500/10 disabled:cursor-not-allowed disabled:opacity-70"
           >
             {loginLoading && <ButtonSpinner />}
             {loginLoading ? "Logging in..." : "Login"}
@@ -142,11 +145,13 @@ export default function LoginPage() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-white text-[#070b1a]/5 p-4"
+              className="mt-6 overflow-hidden rounded-2xl border border-cyan-400/15 bg-slate-950/50 p-4"
             >
-              <h3 className="mb-2 text-lg font-semibold">Reset Password</h3>
+              <h3 className="mb-2 text-lg font-bold text-slate-50">
+                Reset Password
+              </h3>
 
-              <p className="mb-4 text-sm text-slate-300">
+              <p className="mb-4 text-sm text-slate-400">
                 Enter your email and we’ll send you a reset link.
               </p>
 
@@ -155,14 +160,14 @@ export default function LoginPage() {
                 placeholder="Enter your email"
                 value={resetEmail}
                 onChange={(e) => setResetEmail(e.target.value)}
-                className="mb-4 w-full rounded-xl bg-white text-[#070b1a]/5 p-3 outline-none"
+                className={`${inputClass} mb-4`}
                 required
               />
 
               <button
                 type="submit"
                 disabled={resetLoading}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border border-cyan-400/20 bg-cyan-400/10 py-3 font-semibold text-cyan-200 disabled:cursor-not-allowed disabled:opacity-70"
+                className="flex w-full items-center justify-center gap-2 rounded-2xl border border-cyan-400/20 bg-cyan-400/10 py-3 font-semibold text-cyan-200 disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {resetLoading && <ButtonSpinner />}
                 {resetLoading ? "Sending..." : "Send Reset Link"}
@@ -173,7 +178,10 @@ export default function LoginPage() {
 
         <p className="mt-6 text-center text-sm text-slate-300">
           Don’t have an account?{" "}
-          <Link to="/register" className="text-cyan-300 hover:underline">
+          <Link
+            to="/register"
+            className="font-semibold text-cyan-300 hover:text-cyan-200 hover:underline"
+          >
             Sign up
           </Link>
         </p>

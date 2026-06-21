@@ -9,11 +9,7 @@ import { useTheme } from "../context/ThemeContext";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
 import DashboardSidebar from "../components/dashboard/DashboardSidebar";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
-
-
 import StatsGrid from "../components/dashboard/StatsGrid";
-
-import ProgressGauge from "../components/dashboard/ProgressGauge";
 import RightPanel from "../components/dashboard/RightPanel";
 import TaskTable from "../components/dashboard/TaskTable";
 import AiInsightCard from "../components/dashboard/AiInsightCard";
@@ -160,6 +156,8 @@ export default function DashboardPage() {
             setShowCreateModal={setShowCreateModal}
             stats={stats}
             chartData={chartData}
+            theme={theme}
+            isLight={isLight}
           />
         </>
       )}
@@ -167,7 +165,10 @@ export default function DashboardPage() {
   );
 
   return (
-    <DashboardLayout sidebar={sidebar} rightPanel={<RightPanel stats={stats} />}>
+    <DashboardLayout
+      sidebar={sidebar}
+      rightPanel={<RightPanel stats={stats} theme={theme} isLight={isLight} />}
+    >
       <DashboardHeader
         isDesktop={isDesktop}
         setShowSidebar={setShowSidebar}
@@ -182,15 +183,21 @@ export default function DashboardPage() {
         setShowCreateModal={setShowCreateModal}
       />
 
-      <StatsGrid stats={stats} />
+      <StatsGrid stats={stats} theme={theme} isLight={isLight} />
 
       <AiInsightCard
         overdueCount={stats.overdue}
         urgentCount={urgentTasks.length}
         isLight={isLight}
+        theme={theme}
       />
 
-      <TaskTable tasks={tasks} pageLoading={pageLoading} />
+      <TaskTable
+        tasks={tasks}
+        pageLoading={pageLoading}
+        theme={theme}
+        isLight={isLight}
+      />
 
       <CreateTaskModal
         open={showCreateModal}
@@ -200,6 +207,7 @@ export default function DashboardPage() {
         onClose={() => setShowCreateModal(false)}
         loading={createLoading}
         isLight={isLight}
+        theme={theme}
       />
     </DashboardLayout>
   );
