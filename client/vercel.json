@@ -1,19 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/reset-password/(.*)",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/login",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/register",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/dashboard",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
