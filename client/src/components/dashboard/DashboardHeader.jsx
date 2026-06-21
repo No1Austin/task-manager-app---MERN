@@ -9,7 +9,7 @@ import {
   Search,
   Bell,
 } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import ButtonSpinner from "./ButtonSpinner";
 
 export default function DashboardHeader({

@@ -13,6 +13,7 @@ import BookingsPage from "./pages/BookingsPage";
 import MemoryPage from "./pages/MemoryPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SettingsPage from "./pages/SettingsPage";
+import TasksPage from "./pages/TasksPage";
 function App() {
   return (
     <>
@@ -62,6 +63,17 @@ function App() {
   element={
     <ProtectedRoute>
       <ContactsPage />
+    </ProtectedRoute>
+  }
+
+  
+/>
+
+<Route
+  path="/tasks"
+  element={
+    <ProtectedRoute>
+      <TasksPage />
     </ProtectedRoute>
   }
 />

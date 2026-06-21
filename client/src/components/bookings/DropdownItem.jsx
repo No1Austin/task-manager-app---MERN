@@ -1,5 +1,7 @@
+import React from "react";
+
 export default function DropdownItem({
-  icon: Icon,
+  icon,
   label,
   onClick,
   danger = false,
@@ -16,7 +18,7 @@ export default function DropdownItem({
       }`}
     >
       <span className="flex items-center gap-3">
-        <Icon size={16} />
+        {icon && React.createElement(icon, { size: 16 })}
         {label}
       </span>
 

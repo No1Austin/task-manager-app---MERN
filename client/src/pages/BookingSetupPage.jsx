@@ -1,23 +1,23 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
+  Briefcase,
   Brush,
+  CheckCircle2,
   ClipboardList,
+  Clock,
+  Eye,
   GripVertical,
+  Home,
+  Link2,
   Lock,
+  MapPin,
+  Phone,
   Plus,
+  Save,
   Trash2,
   User,
-  Phone,
-  Briefcase,
   Users,
-  MapPin,
-  Home,
-  Clock,
-  Save,
-  Link2,
-  CheckCircle2,
-  Eye,
 } from "lucide-react";
 
 import API from "../services/api";
@@ -25,13 +25,62 @@ import { useAuth } from "../context/useAuth";
 import UpgradeModal from "../components/UpgradeModal";
 
 const defaultQuestions = [
-  { name: "customer_name", label: "Customer Name", type: "text", required: true, locked: true, icon: User },
-  { name: "customer_phone", label: "Customer Phone", type: "text", required: true, locked: true, icon: Phone },
-  { name: "service", label: "Service Needed", type: "text", required: true, locked: true, icon: Briefcase },
-  { name: "persons", label: "Number of Persons", type: "number", required: true, locked: true, icon: Users },
-  { name: "location", label: "Location or Address Needed", type: "text", required: true, locked: true, icon: MapPin },
-  { name: "service_location", label: "In-Shop or Home Service?", type: "text", required: true, locked: true, icon: Home },
-  { name: "booking_date", label: "Preferred Time / Date", type: "datetime-local", required: true, locked: true, icon: Clock },
+  {
+    name: "customer_name",
+    label: "Customer Name",
+    type: "text",
+    required: true,
+    locked: true,
+    icon: User,
+  },
+  {
+    name: "customer_phone",
+    label: "Customer Phone",
+    type: "text",
+    required: true,
+    locked: true,
+    icon: Phone,
+  },
+  {
+    name: "service",
+    label: "Service Needed",
+    type: "text",
+    required: true,
+    locked: true,
+    icon: Briefcase,
+  },
+  {
+    name: "persons",
+    label: "Number of Persons",
+    type: "number",
+    required: true,
+    locked: true,
+    icon: Users,
+  },
+  {
+    name: "location",
+    label: "Location or Address Needed",
+    type: "text",
+    required: true,
+    locked: true,
+    icon: MapPin,
+  },
+  {
+    name: "service_location",
+    label: "In-Shop or Home Service?",
+    type: "text",
+    required: true,
+    locked: true,
+    icon: Home,
+  },
+  {
+    name: "booking_date",
+    label: "Preferred Time / Date",
+    type: "datetime-local",
+    required: true,
+    locked: true,
+    icon: Clock,
+  },
 ];
 
 const emptyForm = {
@@ -66,6 +115,7 @@ export default function BookingSetupPage() {
         const { data } = await API.get("/bookings/profile/me");
 
         setProfile(data);
+
         setForm({
           business_name: data.business_name || "",
           booking_slug: data.booking_slug || "",
@@ -92,8 +142,15 @@ export default function BookingSetupPage() {
   const updateQuestion = (index, field, value) => {
     setForm((prev) => {
       const updatedQuestions = [...prev.booking_questions];
-      updatedQuestions[index] = { ...updatedQuestions[index], [field]: value };
-      return { ...prev, booking_questions: updatedQuestions };
+      updatedQuestions[index] = {
+        ...updatedQuestions[index],
+        [field]: value,
+      };
+
+      return {
+        ...prev,
+        booking_questions: updatedQuestions,
+      };
     });
   };
 
@@ -134,7 +191,9 @@ export default function BookingSetupPage() {
       setProfile(data);
       toast.success("Booking setup saved!");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to save booking setup");
+      toast.error(
+        error.response?.data?.message || "Failed to save booking setup"
+      );
     } finally {
       setLoading(false);
     }
@@ -142,15 +201,20 @@ export default function BookingSetupPage() {
 
   if (!isPro) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#020617] via-[#0f172a] to-[#020617] px-6 py-10 text-white">
-        <div className="mx-auto max-w-4xl rounded-3xl border border-white/10 bg-[#111827]/80 p-8 text-center shadow-2xl">
-          <h1 className="text-3xl font-black">Booking Link is a Pro Feature</h1>
+      <div className="min-h-screen bg-gradient-to-br from-[#020617] via-[#0f172a] to-[#020617] px-5 py-8 text-white">
+        <div className="mx-auto max-w-4xl rounded-3xl border border-white/10 bg-[#111827]/80 p-6 text-center shadow-2xl md:p-8">
+          <h1 className="text-3xl font-black">
+            Booking Link is a Pro Feature
+          </h1>
 
           <p className="mx-auto mt-3 max-w-xl text-slate-400">
-            Upgrade to TaskFlow Pro to create personalized booking links, capture customers automatically, and manage bookings inside TaskFlow.
+            Upgrade to TaskFlow Pro to create personalized booking links,
+            capture customers automatically, and manage bookings inside
+            TaskFlow.
           </p>
 
           <button
+            type="button"
             onClick={() => setShowUpgrade(true)}
             className="mt-6 rounded-2xl bg-gradient-to-r from-cyan-400 to-violet-500 px-6 py-3 font-bold text-white"
           >
@@ -164,17 +228,34 @@ export default function BookingSetupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,#0e749020,transparent_30%),radial-gradient(circle_at_top_right,#7c3aed20,transparent_30%),linear-gradient(135deg,#020617,#0f172a,#020617)] px-6 py-8 text-white">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,#0e749020,transparent_30%),radial-gradient(circle_at_top_right,#7c3aed20,transparent_30%),linear-gradient(135deg,#020617,#0f172a,#020617)] px-3 py-5 text-white sm:px-5 md:px-6 md:py-8">
       <div className="mx-auto max-w-7xl">
         <Hero profile={profile} bookingLink={bookingLink} />
 
-        <div className="mb-8 grid gap-5 md:grid-cols-3">
-          <StatCard icon={Link2} title="Booking Link" value={profile ? "Active" : "Not Setup"} />
-          <StatCard icon={ClipboardList} title="Custom Questions" value={form.booking_questions.length} />
-          <StatCard icon={CheckCircle2} title="Business Profile" value={form.business_name ? "Complete" : "Incomplete"} />
+        <div className="mb-6 grid grid-cols-3 gap-2 md:mb-8 md:gap-5">
+          <StatCard
+            icon={Link2}
+            title="Link"
+            value={profile ? "Active" : "Not Setup"}
+          />
+
+          <StatCard
+            icon={ClipboardList}
+            title="Questions"
+            value={form.booking_questions.length}
+          />
+
+          <StatCard
+            icon={CheckCircle2}
+            title="Profile"
+            value={form.business_name ? "Complete" : "Incomplete"}
+          />
         </div>
 
-        <form onSubmit={handleSubmit} className="grid gap-6 xl:grid-cols-[1fr_360px]">
+        <form
+          onSubmit={handleSubmit}
+          className="grid gap-6 xl:grid-cols-[1fr_360px]"
+        >
           <div className="space-y-6">
             <FormSection>
               <SectionHeader
@@ -191,7 +272,9 @@ export default function BookingSetupPage() {
                     placeholder="e.g. James Catering"
                     className="input-style"
                     value={form.business_name}
-                    onChange={(e) => updateForm("business_name", e.target.value)}
+                    onChange={(e) =>
+                      updateForm("business_name", e.target.value)
+                    }
                   />
                 </Field>
 
@@ -211,7 +294,9 @@ export default function BookingSetupPage() {
                       type="color"
                       className="h-10 w-12 rounded-lg border-0 bg-transparent"
                       value={form.brand_color}
-                      onChange={(e) => updateForm("brand_color", e.target.value)}
+                      onChange={(e) =>
+                        updateForm("brand_color", e.target.value)
+                      }
                     />
 
                     <span className="text-sm text-slate-300">
@@ -228,7 +313,9 @@ export default function BookingSetupPage() {
                     rows="4"
                     className="input-style resize-none"
                     value={form.business_description}
-                    onChange={(e) => updateForm("business_description", e.target.value)}
+                    onChange={(e) =>
+                      updateForm("business_description", e.target.value)
+                    }
                   />
                 </Field>
               </div>
@@ -258,7 +345,9 @@ export default function BookingSetupPage() {
                     placeholder="e.g. hello@business.com"
                     className="input-style"
                     value={form.business_email}
-                    onChange={(e) => updateForm("business_email", e.target.value)}
+                    onChange={(e) =>
+                      updateForm("business_email", e.target.value)
+                    }
                   />
                 </Field>
 
@@ -268,7 +357,9 @@ export default function BookingSetupPage() {
                     placeholder="e.g. 437-000-0000"
                     className="input-style"
                     value={form.business_phone}
-                    onChange={(e) => updateForm("business_phone", e.target.value)}
+                    onChange={(e) =>
+                      updateForm("business_phone", e.target.value)
+                    }
                   />
                 </Field>
               </div>
@@ -289,12 +380,15 @@ export default function BookingSetupPage() {
                   return (
                     <div
                       key={question.name}
-                      className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3"
+                      className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
                     >
                       <div className="flex items-center gap-3">
-                        <GripVertical size={18} className="text-slate-500" />
+                        <GripVertical
+                          size={18}
+                          className="shrink-0 text-slate-500"
+                        />
 
-                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-400/10">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-cyan-400/10">
                           <Icon size={18} className="text-cyan-300" />
                         </div>
 
@@ -309,7 +403,7 @@ export default function BookingSetupPage() {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 text-sm text-slate-400">
+                      <div className="flex items-center gap-2 pl-12 text-sm text-slate-400 sm:pl-0">
                         <Lock size={14} />
                         Default Field
                       </div>
@@ -348,7 +442,9 @@ export default function BookingSetupPage() {
                         placeholder="Question Label"
                         className="input-style"
                         value={question.label}
-                        onChange={(e) => updateQuestion(index, "label", e.target.value)}
+                        onChange={(e) =>
+                          updateQuestion(index, "label", e.target.value)
+                        }
                       />
 
                       <input
@@ -371,7 +467,9 @@ export default function BookingSetupPage() {
                       <select
                         className="input-style"
                         value={question.type}
-                        onChange={(e) => updateQuestion(index, "type", e.target.value)}
+                        onChange={(e) =>
+                          updateQuestion(index, "type", e.target.value)
+                        }
                       >
                         <option value="text">Text</option>
                         <option value="number">Number</option>
@@ -382,7 +480,13 @@ export default function BookingSetupPage() {
                         <input
                           type="checkbox"
                           checked={question.required}
-                          onChange={(e) => updateQuestion(index, "required", e.target.checked)}
+                          onChange={(e) =>
+                            updateQuestion(
+                              index,
+                              "required",
+                              e.target.checked
+                            )
+                          }
                         />
                         <span className="font-semibold">Required</span>
                       </label>
@@ -399,7 +503,8 @@ export default function BookingSetupPage() {
 
                   {form.booking_questions.length === 0 && (
                     <div className="rounded-2xl border border-dashed border-white/10 p-6 text-center text-sm text-slate-400">
-                      No custom questions yet. Add one if your business needs extra details.
+                      No custom questions yet. Add one if your business needs
+                      extra details.
                     </div>
                   )}
                 </div>
@@ -427,27 +532,32 @@ export default function BookingSetupPage() {
 
 function Hero({ profile, bookingLink }) {
   return (
-    <div className="mb-8 rounded-[2rem] border border-white/10 bg-gradient-to-r from-cyan-500/10 via-violet-500/10 to-fuchsia-500/10 p-8 shadow-2xl">
+    <div className="mb-6 rounded-[1.7rem] border border-white/10 bg-gradient-to-r from-cyan-500/10 via-violet-500/10 to-fuchsia-500/10 p-5 shadow-2xl md:mb-8 md:rounded-[2rem] md:p-8">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-sm font-semibold text-cyan-300">TaskFlow Pro</p>
-          <h1 className="mt-2 text-4xl font-black">Booking Link Builder</h1>
-          <p className="mt-3 max-w-2xl text-slate-400">
+
+          <h1 className="mt-2 text-3xl font-black md:text-4xl">
+            Booking Link Builder
+          </h1>
+
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-400 md:text-base">
             Create a professional booking page, collect customer details,
             automate scheduling, and grow your business.
           </p>
         </div>
 
         {profile && (
-          <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-5 py-4">
+          <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-3 md:px-5 md:py-4">
             <p className="text-xs uppercase tracking-wider text-slate-400">
               Live Booking Link
             </p>
+
             <a
               href={bookingLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2 block break-all font-semibold text-cyan-300"
+              className="mt-2 block break-all text-sm font-semibold text-cyan-300 md:text-base"
             >
               {bookingLink}
             </a>
@@ -460,12 +570,21 @@ function Hero({ profile, bookingLink }) {
 
 function StatCard({ icon: Icon, title, value }) {
   return (
-    <div className="rounded-3xl border border-white/10 bg-[#111827]/80 p-5 shadow-xl">
-      <div className="grid h-11 w-11 place-items-center rounded-2xl bg-cyan-400/10 text-cyan-300">
-        <Icon size={22} />
+    <div className="min-w-0 rounded-2xl border border-white/10 bg-[#111827]/80 p-2 shadow-xl md:rounded-3xl md:p-5">
+      <div className="flex flex-col items-center text-center md:items-start md:text-left">
+        <div className="grid h-9 w-9 place-items-center rounded-xl bg-cyan-400/10 text-cyan-300 md:h-11 md:w-11 md:rounded-2xl">
+          {Icon && <Icon size={19} className="md:hidden" />}
+          {Icon && <Icon size={22} className="hidden md:block" />}
+        </div>
+
+        <p className="mt-2 w-full truncate text-[9px] font-bold leading-none text-slate-400 md:mt-4 md:text-sm">
+          {title}
+        </p>
+
+        <h3 className="mt-1 w-full truncate text-xs font-black leading-none text-white md:text-2xl">
+          {value}
+        </h3>
       </div>
-      <p className="mt-4 text-sm text-slate-400">{title}</p>
-      <h3 className="mt-1 text-2xl font-black text-white">{value}</h3>
     </div>
   );
 }
@@ -493,7 +612,12 @@ function LivePreview({ form, bookingLink }) {
         </p>
 
         <div className="mt-5 space-y-3">
-          {["Customer Name", "Customer Phone", "Service Needed", "Preferred Time / Date"].map((item) => (
+          {[
+            "Customer Name",
+            "Customer Phone",
+            "Service Needed",
+            "Preferred Time / Date",
+          ].map((item) => (
             <div
               key={item}
               className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-slate-400"
@@ -513,9 +637,7 @@ function LivePreview({ form, bookingLink }) {
       </div>
 
       {bookingLink && (
-        <p className="mt-4 break-all text-xs text-slate-500">
-          {bookingLink}
-        </p>
+        <p className="mt-4 break-all text-xs text-slate-500">{bookingLink}</p>
       )}
     </aside>
   );
@@ -523,7 +645,7 @@ function LivePreview({ form, bookingLink }) {
 
 function FormSection({ children }) {
   return (
-    <section className="rounded-3xl border border-white/10 bg-[#111827]/80 p-6 shadow-xl">
+    <section className="rounded-3xl border border-white/10 bg-[#111827]/80 p-4 shadow-xl md:p-6">
       {children}
     </section>
   );
@@ -532,12 +654,15 @@ function FormSection({ children }) {
 function SectionHeader({ icon, title, description, color }) {
   return (
     <div className="flex items-start gap-4">
-      <div className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${color} text-white`}>
+      <div
+        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${color} text-white`}
+      >
         {icon}
       </div>
 
       <div>
         <h2 className="text-xl font-black">{title}</h2>
+
         <p className="mt-1 text-sm text-slate-400">{description}</p>
       </div>
     </div>
@@ -550,6 +675,7 @@ function Field({ label, children }) {
       <span className="mb-2 block text-sm font-medium text-slate-300">
         {label}
       </span>
+
       {children}
     </label>
   );

@@ -1,32 +1,38 @@
 @import "tailwindcss";
 
-:root {
-  --bg-main: #020617;
-  --bg-secondary: #0f172a;
-  --bg-grad-1: rgba(124, 58, 237, 0.28);
-  --bg-grad-2: rgba(6, 182, 212, 0.22);
-  --bg-grad-3: rgba(245, 158, 11, 0.16);
+:root,
+.theme-dark,
+.theme-light,
+.theme-ocean {
+--bg-main: #000000;
+--bg-secondary: #020617;
+
+--bg-grad-1: rgba(124, 58, 237, 0.12);
+--bg-grad-2: rgba(34, 211, 238, 0.08);
+--bg-grad-3: rgba(245, 158, 11, 0.04);
+
 
   --text-main: #f8fafc;
   --text-soft: #cbd5e1;
-  --text-muted: #94a3b8;
+  --text-muted: #64748b;
 
-  --card-bg: rgba(255, 255, 255, 0.08);
-  --card-border: rgba(255, 255, 255, 0.15);
+  --card-bg: rgba(15, 23, 42, 0.72);
+  --card-border: rgba(255, 255, 255, 0.08);
 
-  --input-bg: rgba(255, 255, 255, 0.06);
-  --input-border: rgba(255, 255, 255, 0.12);
+  --input-bg: rgba(2, 6, 23, 0.9);
+  --input-border: rgba(34, 211, 238, 0.12);
 
-  --shadow-main: 0 8px 30px rgba(0, 0, 0, 0.2);
+  --shadow-main: 0 10px 40px rgba(0, 0, 0, 0.45);
 }
 
-/* Dark Theme */
-.theme-dark {
+/* Optional real light theme, but still matching site colors */
+.theme-light {
   --bg-main: #020617;
   --bg-secondary: #0f172a;
-  --bg-grad-1: rgba(124, 58, 237, 0.28);
-  --bg-grad-2: rgba(6, 182, 212, 0.22);
-  --bg-grad-3: rgba(245, 158, 11, 0.16);
+
+  --bg-grad-1: rgba(124, 58, 237, 0.25);
+  --bg-grad-2: rgba(34, 211, 238, 0.18);
+  --bg-grad-3: rgba(245, 158, 11, 0.10);
 
   --text-main: #f8fafc;
   --text-soft: #cbd5e1;
@@ -35,53 +41,10 @@
   --card-bg: rgba(255, 255, 255, 0.08);
   --card-border: rgba(255, 255, 255, 0.15);
 
-  --input-bg: rgba(255, 255, 255, 0.06);
-  --input-border: rgba(255, 255, 255, 0.12);
+  --input-bg: rgba(15, 23, 42, 0.9);
+  --input-border: rgba(34, 211, 238, 0.18);
 
   --shadow-main: 0 8px 30px rgba(0, 0, 0, 0.25);
-}
-
-/* Ocean Theme */
-.theme-ocean {
-  --bg-main: #031525;
-  --bg-secondary: #0a2238;
-  --bg-grad-1: rgba(14, 165, 233, 0.26);
-  --bg-grad-2: rgba(34, 197, 94, 0.16);
-  --bg-grad-3: rgba(56, 189, 248, 0.12);
-
-  --text-main: #ecfeff;
-  --text-soft: #dbeafe;
-  --text-muted: #93c5fd;
-
-  --card-bg: rgba(255, 255, 255, 0.08);
-  --card-border: rgba(255, 255, 255, 0.14);
-
-  --input-bg: rgba(255, 255, 255, 0.07);
-  --input-border: rgba(255, 255, 255, 0.12);
-
-  --shadow-main: 0 8px 30px rgba(0, 0, 0, 0.22);
-}
-
-
-.theme-light {
-  --bg-main: #022c22;
-  --bg-secondary: #064e3b;
-
-  --bg-grad-1: rgba(16, 185, 129, 0.22);
-  --bg-grad-2: rgba(34, 197, 94, 0.16);
-  --bg-grad-3: rgba(132, 204, 22, 0.12);
-
-  --text-main: #ecfdf5;
-  --text-soft: #a7f3d0;
-  --text-muted: #6ee7b7;
-
-  --card-bg: rgba(6, 78, 59, 0.75);
-  --card-border: rgba(52, 211, 153, 0.18);
-
-  --input-bg: rgba(6, 95, 70, 0.65);
-  --input-border: rgba(52, 211, 153, 0.18);
-
-  --shadow-main: 0 8px 30px rgba(2, 44, 34, 0.35);
 }
 
 * {
@@ -99,14 +62,18 @@ body,
 body {
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, var(--bg-grad-1), transparent 30%),
-    radial-gradient(circle at top right, var(--bg-grad-2), transparent 30%),
-    radial-gradient(circle at bottom center, var(--bg-grad-3), transparent 30%),
-    linear-gradient(135deg, var(--bg-main) 0%, var(--bg-secondary) 100%);
+  radial-gradient(circle at -10% -10%, var(--bg-grad-1), transparent 45%),
+  radial-gradient(circle at 110% 0%, var(--bg-grad-2), transparent 45%),
+  radial-gradient(circle at 50% 120%, var(--bg-grad-3), transparent 50%),
+  linear-gradient(
+    180deg,
+    #000000 0%,
+    #020617 35%,
+    #030712 100%
+  );
   color: var(--text-main);
 }
 
-/* Let Tailwind control button text colors */
 button,
 input,
 textarea,
@@ -147,34 +114,33 @@ select option {
   box-shadow: var(--shadow-main);
 }
 
-.input-modern {
-  background: var(--input-bg);
-  border: 1px solid var(--input-border);
-  color: var(--text-main);
-}
-
-.input-modern:focus {
-  border-color: rgba(34, 211, 238, 0.45);
-  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.12);
-}
-
-.input-style {
+.input-modern,
+.input-style,
+.booking-input {
   width: 100%;
-  border-radius: 0.75rem;
+  border-radius: 1rem;
   border: 1px solid var(--input-border);
   background: var(--input-bg);
-  padding: 0.75rem 1rem;
+  padding: 0.85rem 1rem;
   color: var(--text-main);
   outline: none;
 }
 
-.input-style::placeholder {
-  color: var(--text-muted);
+.booking-input {
+  padding: 0.95rem 1rem;
 }
 
-.input-style:focus {
-  border-color: rgba(34, 211, 238, 0.5);
-  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.12);
+.input-modern:focus,
+.input-style:focus,
+.booking-input:focus {
+  border-color: rgba(34, 211, 238, 0.65);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
+}
+
+.input-modern::placeholder,
+.input-style::placeholder,
+.booking-input::placeholder {
+  color: var(--text-muted);
 }
 
 .text-main {
@@ -240,57 +206,19 @@ body::-webkit-scrollbar-corner {
   background: transparent;
 }
 
-.input-style {
-  width: 100%;
-  border-radius: 1rem;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.05);
-  padding: 0.85rem 1rem;
-  color: white;
-  outline: none;
+@keyframes bell-ring {
+  0% { transform: rotate(0); }
+  10% { transform: rotate(16deg); }
+  20% { transform: rotate(-14deg); }
+  30% { transform: rotate(12deg); }
+  40% { transform: rotate(-10deg); }
+  50% { transform: rotate(6deg); }
+  60% { transform: rotate(-4deg); }
+  70% { transform: rotate(2deg); }
+  100% { transform: rotate(0); }
 }
 
-.input-style::placeholder {
-  color: rgb(100 116 139);
-}
-
-.input-style:focus {
-  border-color: rgba(34, 211, 238, 0.5);
-}
-
-.input-style {
-  width: 100%;
-  border-radius: 1rem;
-  border: 1px solid rgba(34, 211, 238, 0.18);
-  background: rgba(15, 23, 42, 0.9);
-  padding: 0.85rem 1rem;
-  color: #f8fafc;
-  outline: none;
-}
-
-.input-style::placeholder {
-  color: #94a3b8;
-}
-
-.input-style:focus {
-  border-color: rgba(34, 211, 238, 0.65);
-  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.15);
-}
-
-.booking-input {
-  width: 100%;
-  border-radius: 1rem;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.05);
-  padding: 0.95rem 1rem;
-  color: white;
-  outline: none;
-}
-
-.booking-input::placeholder {
-  color: rgb(148 163 184);
-}
-
-.booking-input:focus {
-  border-color: rgba(34, 211, 238, 0.55);
+.animate-bell-ring {
+  animation: bell-ring 1.2s ease-in-out infinite;
+  transform-origin: top center;
 }

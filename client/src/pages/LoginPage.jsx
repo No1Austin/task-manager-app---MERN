@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
-import toast from "react-hot-toast";
+import toast from "react-hot-toast";import { motion } from "framer-motion";
 
 import { useAuth } from "../context/useAuth";
 import API from "../services/api";
