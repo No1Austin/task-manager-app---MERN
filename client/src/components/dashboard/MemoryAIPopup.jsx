@@ -4,7 +4,7 @@ import {
   CalendarDays,
   CheckCircle2,
   Clock,
-  MessageCircle,
+  ,
   RefreshCcw,
   Send,
   Sparkles,
@@ -384,7 +384,7 @@ export default function MemoryAIPopup() {
         onClick={() => setOpen((prev) => !prev)}
         className="relative grid h-15 w-15 place-items-center rounded-3xl bg-gradient-to-r from-cyan-400 to-violet-500 text-white shadow-2xl shadow-cyan-500/30 sm:h-16 sm:w-16"
       >
-        <MessageCircle size={28} />
+        < size={28} />
 
         <span className="absolute -right-1 -top-1 grid h-6 min-w-6 place-items-center rounded-full bg-red-500 px-1 text-xs font-black">
           AI

@@ -1013,8 +1013,7 @@ function ContactCard({ contact, openSmartMenu, setSelectedContact }) {
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-1 rounded-xl bg-emerald-400/10 px-3 py-3 text-xs font-bold text-emerald-300 hover:bg-emerald-400/15"
           >
-            <MessageCircle size={14} />
-            Chat
+            
           </a>
         ) : (
           <button
@@ -1022,8 +1021,8 @@ function ContactCard({ contact, openSmartMenu, setSelectedContact }) {
             disabled
             className="inline-flex items-center justify-center gap-1 rounded-xl bg-emerald-400/10 px-3 py-3 text-xs font-bold text-emerald-300 opacity-50"
           >
-            <MessageCircle size={14} />
-            Chat
+           <MessageCircle size={14} />
+Chat
           </button>
         )}
 

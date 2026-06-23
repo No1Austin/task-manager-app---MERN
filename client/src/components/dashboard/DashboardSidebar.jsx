@@ -13,6 +13,7 @@ import {
   Link2,
   MessageCircle,
 } from "lucide-react";
+
 import { motion } from "framer-motion";
 import ButtonSpinner from "./ButtonSpinner";
 
@@ -61,6 +62,7 @@ export default function DashboardSidebar({
 
         {!isDesktop && (
           <button
+            type="button"
             onClick={() => setShowSidebar(false)}
             className="rounded-xl border border-white/10 bg-white/[0.04] p-2 text-slate-300"
           >
@@ -74,13 +76,18 @@ export default function DashboardSidebar({
           Signed in
         </p>
 
-        <h2 className="mt-3 truncate font-bold text-white">{user?.name}</h2>
-        <p className="truncate text-sm text-slate-400">{user?.email}</p>
+        <h2 className="mt-3 truncate font-bold text-white">
+          {user?.name || "User"}
+        </h2>
+
+        <p className="truncate text-sm text-slate-400">
+          {user?.email || "No email"}
+        </p>
 
         <div className="mt-4 flex items-center justify-between rounded-2xl bg-white/[0.06] px-3 py-2">
           <span className="text-xs text-slate-400">Plan</span>
           <span className="rounded-full bg-cyan-400/15 px-3 py-1 text-xs font-bold capitalize text-cyan-300">
-            {plan}
+            {plan || "trial"}
           </span>
         </div>
 
@@ -88,13 +95,16 @@ export default function DashboardSidebar({
           <p className="mt-3 text-xs text-slate-400">
             Trial ends{" "}
             <span className="text-slate-200">
-              {trialEndsAt ? new Date(trialEndsAt).toLocaleDateString() : "soon"}
+              {trialEndsAt
+                ? new Date(trialEndsAt).toLocaleDateString()
+                : "soon"}
             </span>
           </p>
         )}
       </div>
 
       <button
+        type="button"
         onClick={() => setShowCreateModal(true)}
         className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-400 to-violet-500 px-4 py-3 text-sm font-bold text-white"
       >
@@ -140,16 +150,21 @@ export default function DashboardSidebar({
         </div>
 
         <h3 className="mt-4 font-black text-white">Upgrade to Pro</h3>
+
         <p className="mt-2 text-sm leading-6 text-slate-400">
           Unlock contacts, bookings, WhatsApp and Memory AI.
         </p>
 
-        <button className="mt-4 w-full rounded-2xl bg-gradient-to-r from-cyan-400 to-violet-500 px-4 py-3 text-sm font-black text-white">
+        <button
+          type="button"
+          className="mt-4 w-full rounded-2xl bg-gradient-to-r from-cyan-400 to-violet-500 px-4 py-3 text-sm font-black text-white"
+        >
           Upgrade
         </button>
       </div>
 
       <button
+        type="button"
         onClick={handleLogout}
         disabled={logoutLoading}
         className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 px-4 py-3 text-sm font-semibold text-slate-300 transition hover:bg-red-500/10 hover:text-red-300 disabled:opacity-60"

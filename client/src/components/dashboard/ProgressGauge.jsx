@@ -1,69 +1,89 @@
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, TrendingUp } from "lucide-react";
 
-export default function ProgressGauge({ completed = 0, total = 0 }) {
+export default function ProgressGauge({
+  completed = 0,
+  total = 0,
+  compact = false,
+}) {
   const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+  const remaining = Math.max(total - completed, 0);
 
-  const radius = 70;
-  const stroke = 14;
-  const normalizedRadius = radius - stroke / 2;
-  const circumference = normalizedRadius * Math.PI;
-  const strokeDashoffset =
-    circumference - (percentage / 100) * circumference;
+  const barWidth = `${Math.min(percentage, 100)}%`;
 
   return (
-    <div className="rounded-3xl border border-white/10 bg-[#111827]/80 p-5 shadow-lg">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-black text-white">Progress Rate</h3>
-          <p className="mt-1 text-sm text-slate-400">Task completion</p>
-        </div>
+    <div
+      className={`relative overflow-hidden rounded-3xl border border-white/10 bg-[#111827]/80 shadow-lg ${
+        compact ? "p-4" : "p-5"
+      }`}
+    >
+      <div className="pointer-events-none absolute -right-16 -top-16 h-32 w-32 rounded-full bg-cyan-400/20 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-16 -left-16 h-32 w-32 rounded-full bg-violet-500/20 blur-3xl" />
 
-        <div className="grid h-10 w-10 place-items-center rounded-2xl bg-cyan-400/10 text-cyan-300">
-          <CheckCircle2 size={20} />
-        </div>
-      </div>
+      <div className="relative">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-300">
+              Progress Rate
+            </p>
 
-      <div className="mt-5 flex justify-center">
-        <div className="relative h-[150px] w-[170px]">
-          <svg height="150" width="170" viewBox="0 0 170 150">
-            <path
-              d="M 20 120 A 65 65 0 0 1 150 120"
-              fill="none"
-              stroke="rgba(148, 163, 184, 0.2)"
-              strokeWidth="14"
-              strokeLinecap="round"
-            />
+            <h3
+              className={`mt-2 font-black text-white ${
+                compact ? "text-xl" : "text-2xl"
+              }`}
+            >
+              Task Completion
+            </h3>
+          </div>
 
-            <path
-              d="M 20 120 A 65 65 0 0 1 150 120"
-              fill="none"
-              stroke="url(#progressGradient)"
-              strokeWidth="14"
-              strokeLinecap="round"
-              strokeDasharray={circumference}
-              strokeDashoffset={strokeDashoffset}
-              className="transition-all duration-700"
-            />
-
-            <defs>
-              <linearGradient id="progressGradient" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#22d3ee" />
-                <stop offset="100%" stopColor="#8b5cf6" />
-              </linearGradient>
-            </defs>
-          </svg>
-
-          <div className="absolute inset-x-0 top-[72px] text-center">
-            <p className="text-4xl font-black text-white">{percentage}%</p>
-            <p className="mt-1 text-xs text-slate-400">Completed</p>
+          <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-emerald-400/10 text-emerald-300">
+            <CheckCircle2 size={21} />
           </div>
         </div>
-      </div>
 
-      <div className="mt-2 rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-center">
-        <p className="text-sm text-slate-400">
-          {completed} of {total} tasks completed
-        </p>
+        <div className="mt-5 rounded-3xl border border-white/10 bg-black/20 p-4">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="text-4xl font-black leading-none text-white">
+                {percentage}%
+              </p>
+              <p className="mt-2 text-sm font-semibold text-slate-400">
+                {completed} of {total} task(s) completed
+              </p>
+            </div>
+
+            <div className="text-right">
+              <p className="text-sm font-bold text-slate-400">Remaining</p>
+              <p className="mt-1 text-2xl font-black text-cyan-300">
+                {remaining}
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-5 h-3 overflow-hidden rounded-full bg-white/10">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-sky-400 to-violet-500 shadow-[0_0_18px_rgba(34,211,238,0.35)] transition-all duration-500"
+              style={{ width: barWidth }}
+            />
+          </div>
+
+          <div className="mt-4 flex items-center justify-between text-xs font-semibold text-slate-500">
+            <span>0%</span>
+            <span>50%</span>
+            <span>100%</span>
+          </div>
+        </div>
+
+        <div className="mt-4 flex items-center gap-2 rounded-2xl border border-cyan-400/10 bg-cyan-400/5 px-3 py-2 text-sm text-slate-300">
+          <TrendingUp size={16} className="text-cyan-300" />
+
+          <span>
+            {percentage >= 70
+              ? "Great progress today. Keep the momentum going."
+              : percentage >= 35
+              ? "Good start. A few more completed tasks will improve your rate."
+              : "You still have room to push today’s progress forward."}
+          </span>
+        </div>
       </div>
     </div>
   );

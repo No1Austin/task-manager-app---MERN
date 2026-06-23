@@ -1,7 +1,8 @@
 import { MessageCircle } from "lucide-react";
+import { useState } from "react";
+
 import UpgradeModal from "../components/UpgradeModal";
 import { useAuth } from "../context/useAuth";
-import { useState } from "react";
 
 export default function WhatsAppPage() {
   const { isPro } = useAuth();
@@ -15,7 +16,9 @@ export default function WhatsAppPage() {
             <MessageCircle size={30} />
           </div>
 
-          <h1 className="mt-5 text-3xl font-black">WhatsApp is a Pro Feature</h1>
+          <h1 className="mt-5 text-3xl font-black">
+            WhatsApp is a Pro Feature
+          </h1>
 
           <p className="mx-auto mt-3 max-w-xl text-slate-400">
             Upgrade to TaskFlow Pro to send WhatsApp messages to contacts,
@@ -23,6 +26,7 @@ export default function WhatsAppPage() {
           </p>
 
           <button
+            type="button"
             onClick={() => setShowUpgrade(true)}
             className="mt-6 rounded-2xl bg-gradient-to-r from-cyan-400 to-violet-500 px-6 py-3 font-bold text-white"
           >
@@ -45,16 +49,20 @@ export default function WhatsAppPage() {
 
           <div>
             <h1 className="text-3xl font-black">WhatsApp Integration</h1>
+
             <p className="mt-2 text-slate-400">
-              Start with quick-send messages. Full WhatsApp Business API can come later.
+              Start with quick-send messages. Full WhatsApp Business API can
+              come later.
             </p>
           </div>
         </div>
 
         <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.05] p-6">
           <h2 className="text-xl font-bold">Quick Send</h2>
+
           <p className="mt-2 text-sm text-slate-400">
-            Select a contact later, write a message, and TaskFlow will open WhatsApp with the message ready.
+            Select a contact later, write a message, and TaskFlow will open
+            WhatsApp with the message ready.
           </p>
         </div>
       </div>
