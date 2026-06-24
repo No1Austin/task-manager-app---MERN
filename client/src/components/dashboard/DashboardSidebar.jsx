@@ -14,7 +14,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 
-import { motion } from "framer-motion";
+
 import ButtonSpinner from "./ButtonSpinner";
 
 const navItems = [

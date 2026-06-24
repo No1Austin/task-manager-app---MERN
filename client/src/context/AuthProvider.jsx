@@ -17,8 +17,8 @@ export function AuthProvider({ children }) {
 
       try {
         const { data } = await API.get("/auth/me");
-        setUser(data.user || data);
-        console.log("AUTH ME DATA:", data);
+        const currentUser = data.user || data;
+        setUser(currentUser);
       } catch {
         localStorage.removeItem("token");
         setUser(null);
@@ -32,8 +32,10 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     const { data } = await API.post("/auth/login", { email, password });
+
     localStorage.setItem("token", data.token);
     setUser(data.user);
+
     return data;
   };
 
@@ -46,6 +48,7 @@ export function AuthProvider({ children }) {
 
     localStorage.setItem("token", data.token);
     setUser(data.user);
+
     return data;
   };
 
@@ -55,21 +58,47 @@ export function AuthProvider({ children }) {
   };
 
   const plan = user?.plan || "trial";
+  const subscriptionStatus = user?.subscriptionStatus || "trial";
+  const trialEndsAt = user?.trialEndsAt || null;
+
+  const isTrialExpired =
+    plan === "trial" &&
+    trialEndsAt &&
+    new Date(trialEndsAt) < new Date();
+
+  const isTrial = plan === "trial" && !isTrialExpired;
+  const isStarter =
+    plan === "starter" && subscriptionStatus === "active";
+
+  const isPro =
+    plan === "pro" && subscriptionStatus === "active";
+
+  const canUseFreeFeatures = isTrial || isStarter || isPro;
+  const canUseProFeatures = isPro;
 
   return (
     <AuthContext.Provider
       value={{
         user,
         setUser,
+
         login,
         register,
         logout,
+
         authLoading,
+
         plan,
-        trialEndsAt: user?.trialEndsAt || null,
-        isTrial: plan === "trial",
-        isStarter: plan === "starter",
-        isPro: plan === "pro",
+        subscriptionStatus,
+        trialEndsAt,
+
+        isTrial,
+        isTrialExpired,
+        isStarter,
+        isPro,
+
+        canUseFreeFeatures,
+        canUseProFeatures,
       }}
     >
       {children}

@@ -20,6 +20,12 @@ const allowedOrigins = [
   "https://task-manager-app-mern-rlew.vercel.app",
   "https://task-manager-app-mern-wheat.vercel.app",
   "https://task-manager-app-mern-git-main-austins-projects-f4744c22.vercel.app",
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://taskflowaemasystems.com",
+  "https://www.taskflowaemasystems.com",
+  "https://task-manager-app-mern-phi.vercel.app",
+
 ];
 
 app.use(
