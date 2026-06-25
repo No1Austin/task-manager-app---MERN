@@ -7,22 +7,45 @@ const { supabase } = require("../config/supabase");
 
 const router = express.Router();
 
+const TRIAL_DAYS = Number(process.env.TRIAL_DAYS || 30);
+
 const createToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: "7d",
   });
 };
 
+const userSelect = `
+  id,
+  name,
+  email,
+  theme,
+  plan,
+  subscription_status,
+  trial_start_date,
+  trial_ends_at,
+  stripe_customer_id,
+  stripe_subscription_id,
+  stripe_price_id,
+  current_period_end,
+  cancel_at_period_end
+`;
+
 const formatUser = (user) => ({
   _id: user.id,
   id: user.id,
   name: user.name,
   email: user.email,
-  theme: user.theme,
+  theme: user.theme || "light",
   plan: user.plan || "trial",
-  subscriptionStatus: user.subscription_status,
+  subscriptionStatus: user.subscription_status || "trial",
   trialStartDate: user.trial_start_date,
   trialEndsAt: user.trial_ends_at,
+  stripeCustomerId: user.stripe_customer_id || "",
+  stripeSubscriptionId: user.stripe_subscription_id || "",
+  stripePriceId: user.stripe_price_id || "",
+  currentPeriodEnd: user.current_period_end || null,
+  cancelAtPeriodEnd: user.cancel_at_period_end || false,
 });
 
 const protect = async (req, res, next) => {
@@ -39,9 +62,7 @@ const protect = async (req, res, next) => {
 
     const { data: user, error } = await supabase
       .from("users")
-      .select(
-        "id, name, email, theme, plan, subscription_status, trial_start_date, trial_ends_at"
-      )
+      .select(userSelect)
       .eq("id", decoded.id)
       .single();
 
@@ -52,7 +73,8 @@ const protect = async (req, res, next) => {
     req.user = formatUser(user);
 
     next();
-  } catch {
+  } catch (error) {
+    console.error("AUTH PROTECT ERROR:", error);
     return res.status(401).json({ message: "Not authorized" });
   }
 };
@@ -65,10 +87,12 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ message: "Please fill all fields" });
     }
 
+    const normalizedEmail = email.toLowerCase().trim();
+
     const { data: existingUser } = await supabase
       .from("users")
       .select("id")
-      .eq("email", email)
+      .eq("email", normalizedEmail)
       .maybeSingle();
 
     if (existingUser) {
@@ -79,29 +103,33 @@ router.post("/register", async (req, res) => {
 
     const trialStart = new Date();
     const trialEnd = new Date(
-      trialStart.getTime() + 7 * 24 * 60 * 60 * 1000
+      trialStart.getTime() + TRIAL_DAYS * 24 * 60 * 60 * 1000
     );
 
     const { data: user, error } = await supabase
       .from("users")
       .insert([
         {
-          name,
-          email,
+          name: name.trim(),
+          email: normalizedEmail,
           password: hashedPassword,
           theme: "light",
           plan: "trial",
           subscription_status: "trial",
           trial_start_date: trialStart.toISOString(),
           trial_ends_at: trialEnd.toISOString(),
+          stripe_customer_id: "",
+          stripe_subscription_id: "",
+          stripe_price_id: "",
+          current_period_end: null,
+          cancel_at_period_end: false,
         },
       ])
-      .select(
-        "id, name, email, theme, plan, subscription_status, trial_start_date, trial_ends_at"
-      )
+      .select(userSelect)
       .single();
 
     if (error) {
+      console.error("REGISTER SUPABASE ERROR:", error);
       return res.status(400).json({ message: error.message });
     }
 
@@ -111,7 +139,8 @@ router.post("/register", async (req, res) => {
       token,
       user: formatUser(user),
     });
-  } catch {
+  } catch (error) {
+    console.error("REGISTER ERROR:", error);
     return res.status(500).json({ message: "Registration failed" });
   }
 });
@@ -126,10 +155,12 @@ router.post("/login", async (req, res) => {
       });
     }
 
+    const normalizedEmail = email.toLowerCase().trim();
+
     const { data: user, error } = await supabase
       .from("users")
       .select("*")
-      .eq("email", email)
+      .eq("email", normalizedEmail)
       .maybeSingle();
 
     if (error || !user) {
@@ -148,7 +179,8 @@ router.post("/login", async (req, res) => {
       token,
       user: formatUser(user),
     });
-  } catch {
+  } catch (error) {
+    console.error("LOGIN ERROR:", error);
     return res.status(500).json({ message: "Login failed" });
   }
 });
@@ -161,10 +193,12 @@ router.post("/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
 
+    const normalizedEmail = email?.toLowerCase().trim();
+
     const { data: user } = await supabase
       .from("users")
       .select("*")
-      .eq("email", email)
+      .eq("email", normalizedEmail)
       .maybeSingle();
 
     if (!user) {
@@ -219,7 +253,8 @@ This link will expire in 15 minutes.
     return res.status(200).json({
       message: "If that email exists, a reset link has been sent",
     });
-  } catch {
+  } catch (error) {
+    console.error("FORGOT PASSWORD ERROR:", error);
     return res.status(500).json({ message: "Failed to send reset email" });
   }
 });
@@ -266,7 +301,8 @@ router.post("/reset-password/:token", async (req, res) => {
     return res.status(200).json({
       message: "Password has been reset successfully",
     });
-  } catch {
+  } catch (error) {
+    console.error("RESET PASSWORD ERROR:", error);
     return res.status(500).json({ message: "Failed to reset password" });
   }
 });
