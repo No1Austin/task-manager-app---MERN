@@ -24,32 +24,30 @@ const allowedOrigins = [
   "https://task-manager-app-mern-git-main-austins-projects-f4744c22.vercel.app",
 ];
 
-app.use(
-  cors({
-    origin(origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
+const corsOptions = {
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
 
-      return callback(new Error("Not allowed by CORS"));
-    },
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "stripe-signature"],
-    credentials: true,
-  })
-);
+    return callback(new Error(`Not allowed by CORS: ${origin}`));
+  },
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "stripe-signature"],
+  credentials: true,
+};
 
-app.options("*", cors());
-
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(cookieParser());
 
-/*
-  IMPORTANT:
-  Stripe webhooks need the raw request body.
-  This must come BEFORE app.use(express.json()).
-*/
-app.use("/api/payments/webhook", express.raw({ type: "application/json" }));
+// Stripe webhook must receive RAW body before express.json()
+app.use(
+  "/api/payments/webhook",
+  express.raw({ type: "application/json" })
+);
 
+// Normal parsers for every other route
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 

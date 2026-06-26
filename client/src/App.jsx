@@ -14,6 +14,7 @@ import MemoryPage from "./pages/MemoryPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SettingsPage from "./pages/SettingsPage";
 import TasksPage from "./pages/TasksPage";
+import PaymentSuccess from "./pages/PaymentSuccess";
 function App() {
   return (
     <>
@@ -102,7 +103,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-
+<Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/book/:slug" element={<PublicBookingPage />} />
       </Routes>
     </>
