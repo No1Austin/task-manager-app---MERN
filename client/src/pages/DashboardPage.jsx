@@ -31,6 +31,7 @@ import StatsGrid from "../components/dashboard/StatsGrid";
 import RightPanel from "../components/dashboard/RightPanel";
 import TaskTable from "../components/dashboard/TaskTable";
 import CreateTaskModal from "../components/dashboard/CreateTaskModal";
+import UpgradeModal from "../components/UpgradeModal";
 
 import {
   isTaskOverdue,
@@ -75,12 +76,27 @@ export default function DashboardPage() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [showMobileNav, setShowMobileNav] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showUpgrade, setShowUpgrade] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [createLoading, setCreateLoading] = useState(false);
   const [logoutLoading, setLogoutLoading] = useState(false);
 
   const profileRef = useRef(null);
+
+  const openUpgradeModal = () => {
+    setShowMobileNav(false);
+
+    if (!isDesktop) {
+      setShowSidebar(false);
+      setTimeout(() => {
+        setShowUpgrade(true);
+      }, 150);
+      return;
+    }
+
+    setShowUpgrade(true);
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -185,7 +201,6 @@ export default function DashboardPage() {
     const loadDashboardData = async () => {
       try {
         setPageLoading(true);
-
         await Promise.all([loadTasks(), loadBookingsIntelligence()]);
       } catch {
         toast.error("Failed to load dashboard");
@@ -285,6 +300,7 @@ export default function DashboardPage() {
             handleLogout={handleLogout}
             logoutLoading={logoutLoading}
             setShowCreateModal={setShowCreateModal}
+            onUpgrade={openUpgradeModal}
             stats={stats}
             chartData={chartData}
             theme={theme}
@@ -503,41 +519,12 @@ export default function DashboardPage() {
             </div>
 
             <div className="mt-4 space-y-2">
-              <InsightRow
-                icon="⚠️"
-                label="Overdue Tasks"
-                value={stats.overdue}
-              />
-
-              <InsightRow
-                icon="📞"
-                label="Follow-Ups Needed"
-                value={intelligence.followUps}
-              />
-
-              <InsightRow
-                icon="🔄"
-                label="One-Time Customers"
-                value={intelligence.oneTimeCustomers}
-              />
-
-              <InsightRow
-                icon="💤"
-                label="Inactive Customers"
-                value={intelligence.inactiveCustomers}
-              />
-
-              <InsightRow
-                icon="⭐"
-                label="VIP Customers"
-                value={intelligence.vipCustomers}
-              />
-
-              <InsightRow
-                icon="📅"
-                label="Bookings Today"
-                value={intelligence.bookingsToday}
-              />
+              <InsightRow icon="⚠️" label="Overdue Tasks" value={stats.overdue} />
+              <InsightRow icon="📞" label="Follow-Ups Needed" value={intelligence.followUps} />
+              <InsightRow icon="🔄" label="One-Time Customers" value={intelligence.oneTimeCustomers} />
+              <InsightRow icon="💤" label="Inactive Customers" value={intelligence.inactiveCustomers} />
+              <InsightRow icon="⭐" label="VIP Customers" value={intelligence.vipCustomers} />
+              <InsightRow icon="📅" label="Bookings Today" value={intelligence.bookingsToday} />
             </div>
 
             <Link
@@ -728,66 +715,74 @@ export default function DashboardPage() {
           theme={theme}
         />
 
-        
+        <UpgradeModal
+          open={showUpgrade}
+          onClose={() => setShowUpgrade(false)}
+        />
       </div>
     );
   }
 
   return (
-    <DashboardLayout
-      sidebar={sidebar}
-      rightPanel={
-        <RightPanel
+    <>
+      <DashboardLayout
+        sidebar={sidebar}
+        rightPanel={
+          <RightPanel
+            stats={stats}
+            intelligence={intelligence}
+            theme={theme}
+            isLight={isLight}
+          />
+        }
+      >
+        <DashboardHeader
+          isDesktop={isDesktop}
+          setShowSidebar={setShowSidebar}
+          theme={theme}
+          setTheme={setTheme}
+          profileRef={profileRef}
+          showProfileDropdown={showProfileDropdown}
+          setShowProfileDropdown={setShowProfileDropdown}
+          user={user}
+          handleLogout={handleLogout}
+          logoutLoading={logoutLoading}
+          setShowCreateModal={setShowCreateModal}
+        />
+
+        <StatsGrid stats={stats} theme={theme} isLight={isLight} />
+
+        <BusinessIntelligenceCard
           stats={stats}
+          urgentCount={urgentTasks.length}
           intelligence={intelligence}
+        />
+
+        <TaskTable
+          tasks={tasks}
+          setTasks={setTasks}
+          pageLoading={pageLoading}
           theme={theme}
           isLight={isLight}
         />
-      }
-    >
-      <DashboardHeader
-        isDesktop={isDesktop}
-        setShowSidebar={setShowSidebar}
-        theme={theme}
-        setTheme={setTheme}
-        profileRef={profileRef}
-        showProfileDropdown={showProfileDropdown}
-        setShowProfileDropdown={setShowProfileDropdown}
-        user={user}
-        handleLogout={handleLogout}
-        logoutLoading={logoutLoading}
-        setShowCreateModal={setShowCreateModal}
+
+        <CreateTaskModal
+          open={showCreateModal}
+          form={form}
+          setForm={setForm}
+          onSubmit={handleCreateTask}
+          onClose={() => setShowCreateModal(false)}
+          loading={createLoading}
+          isLight={isLight}
+          theme={theme}
+        />
+      </DashboardLayout>
+
+      <UpgradeModal
+        open={showUpgrade}
+        onClose={() => setShowUpgrade(false)}
       />
-
-      <StatsGrid stats={stats} theme={theme} isLight={isLight} />
-
-     <BusinessIntelligenceCard
-  stats={stats}
-  urgentCount={urgentTasks.length}
-  intelligence={intelligence}
-/>
-
-      <TaskTable
-        tasks={tasks}
-        setTasks={setTasks}
-        pageLoading={pageLoading}
-        theme={theme}
-        isLight={isLight}
-      />
-
-      <CreateTaskModal
-        open={showCreateModal}
-        form={form}
-        setForm={setForm}
-        onSubmit={handleCreateTask}
-        onClose={() => setShowCreateModal(false)}
-        loading={createLoading}
-        isLight={isLight}
-        theme={theme}
-      />
-
-      
-    </DashboardLayout>
+    </>
   );
 }
 
@@ -806,22 +801,13 @@ function InsightRow({ icon, label, value }) {
         {value}
       </span>
     </div>
-
-    
   );
 }
+
 function BusinessIntelligenceCard({ stats, urgentCount, intelligence }) {
   const items = [
-    {
-      label: "Overdue Tasks",
-      value: stats.overdue,
-      icon: "⚠️",
-    },
-    {
-      label: "Urgent Items",
-      value: urgentCount,
-      icon: "🔥",
-    },
+    { label: "Overdue Tasks", value: stats.overdue, icon: "⚠️" },
+    { label: "Urgent Items", value: urgentCount, icon: "🔥" },
     {
       label: "Follow-Ups Needed",
       value: intelligence.followUps || 0,

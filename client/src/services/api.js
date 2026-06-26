@@ -1,7 +1,15 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5001/api",
+  baseURL:
+    import.meta.env.VITE_API_URL ||
+    "http://localhost:5001/api",
+
+  headers: {
+    "Content-Type": "application/json",
+  },
+
+  withCredentials: true,
 });
 
 API.interceptors.request.use((config) => {
@@ -13,5 +21,17 @@ API.interceptors.request.use((config) => {
 
   return config;
 });
+
+API.interceptors.response.use(
+  (response) => response,
+
+  (error) => {
+    if (error.response?.status === 401) {
+      console.log("Unauthorized");
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export default API;

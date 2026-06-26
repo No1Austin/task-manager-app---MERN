@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   LayoutDashboard,
   Plus,
@@ -13,7 +14,6 @@ import {
   Link2,
   MessageCircle,
 } from "lucide-react";
-
 
 import ButtonSpinner from "./ButtonSpinner";
 
@@ -37,6 +37,7 @@ export default function DashboardSidebar({
   handleLogout,
   logoutLoading,
   setShowCreateModal,
+  onUpgrade,
 }) {
   return (
     <motion.aside
@@ -144,24 +145,27 @@ export default function DashboardSidebar({
         })}
       </nav>
 
-      <div className="mt-auto rounded-3xl border border-cyan-400/20 bg-gradient-to-br from-cyan-400/10 to-violet-500/10 p-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-400/15 text-cyan-300">
-          <Crown size={20} />
+      {plan !== "pro" && (
+        <div className="mt-auto rounded-3xl border border-cyan-400/20 bg-gradient-to-br from-cyan-400/10 to-violet-500/10 p-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-400/15 text-cyan-300">
+            <Crown size={20} />
+          </div>
+
+          <h3 className="mt-4 font-black text-white">Upgrade to Pro</h3>
+
+          <p className="mt-2 text-sm leading-6 text-slate-400">
+            Unlock contacts, bookings, WhatsApp and Memory AI.
+          </p>
+
+          <button
+            type="button"
+            onClick={onUpgrade}
+            className="mt-4 w-full rounded-2xl bg-gradient-to-r from-cyan-400 to-violet-500 px-4 py-3 text-sm font-black text-white"
+          >
+            Upgrade
+          </button>
         </div>
-
-        <h3 className="mt-4 font-black text-white">Upgrade to Pro</h3>
-
-        <p className="mt-2 text-sm leading-6 text-slate-400">
-          Unlock contacts, bookings, WhatsApp and Memory AI.
-        </p>
-
-        <button
-          type="button"
-          className="mt-4 w-full rounded-2xl bg-gradient-to-r from-cyan-400 to-violet-500 px-4 py-3 text-sm font-black text-white"
-        >
-          Upgrade
-        </button>
-      </div>
+      )}
 
       <button
         type="button"
